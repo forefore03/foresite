@@ -40,7 +40,19 @@
     .hero-label { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
     .hero-title { font-size: 28px; line-height: 1.2; font-weight: 700; margin: 0 0 10px; }
     .hero-text { font-size: 16px; line-height: 1.5; color: var(--muted); margin: 0 0 18px; }
-    .primary-button,.choice-button,.close-button,.delete-button,.edit-button,.detail-back-button { border: none; cursor: pointer; font-family: inherit; }
+    .primary-button,.secondary-button,.choice-button,.close-button,.delete-button,.edit-button,.detail-back-button { border: none; cursor: pointer; font-family: inherit; }
+    .backup-row { margin: 14px 0 18px; }
+
+    .secondary-button {
+      width: 100%;
+      border-radius: 16px;
+      background: #ece8df;
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 700;
+      padding: 14px 16px;
+      border: 1px solid rgba(217, 212, 202, 0.9);
+    }
     .primary-button { width: 100%; border-radius: 16px; background: var(--accent); color: var(--white); font-size: 17px; font-weight: 700; padding: 16px; }
     .primary-button:disabled { opacity: 0.55; cursor: not-allowed; }
     .section { margin-top: 26px; }
@@ -117,6 +129,9 @@
     </section>
     <section class="section">
       <div id="latestRecord"></div>
+      <div class="backup-row">
+        <button type="button" class="secondary-button" id="exportBackupButton">백업 내보내기</button>
+      </div>
       <section class="search-card">
         <div class="search-label">지난 기억 찾기</div>
         <input type="search" id="searchInput" class="search-input" placeholder="분위기나 장소로 찾아보세요">
@@ -230,6 +245,7 @@
     saveRecordButton: document.getElementById('saveRecordButton'),
     recordsList: document.getElementById('recordsList'),
     latestRecord: document.getElementById('latestRecord'),
+    exportBackupButton: document.getElementById('exportBackupButton'),
     modalTitle: document.getElementById('modalTitle'),
     searchInput: document.getElementById('searchInput'),
     searchResultText: document.getElementById('searchResultText'),
@@ -425,6 +441,46 @@
     return saveRecord(updatedRecord);
   }
 
+    function downloadTextFile(filename, text) {
+  var blob = new Blob([text], { type: 'application/json;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var link = document.createElement('a');
+
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  setTimeout(function () {
+    URL.revokeObjectURL(url);
+  }, 1000);
+}
+
+async function exportBackup() {
+  try {
+    var records = await getRecords();
+    var today = getTodayValue();
+    var backupData = {
+      app: 'foresite',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      recordCount: records.length,
+      records: records
+    };
+
+    downloadTextFile(
+      'foresite-backup-' + today + '.json',
+      JSON.stringify(backupData, null, 2)
+    );
+
+    showToast('백업 파일을 내보냈어요.');
+  } catch (error) {
+    console.error(error);
+    showToast('백업 파일을 만드는 중 문제가 생겼어요.');
+  }
+}
+    
   function getFilteredRecords(records, searchTerm) {
     var query = (searchTerm || '').trim().toLowerCase();
     if (!query) return records;
@@ -859,6 +915,10 @@
     submitRecord();
   });
 
+    els.exportBackupButton.addEventListener('click', function () {
+  exportBackup();
+});
+    
   document.addEventListener('click', function (e) {
     var card = e.target.closest('.trip-card');
     if (!card) return;
