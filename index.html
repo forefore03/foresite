@@ -511,10 +511,6 @@
     .map(function (record) { return buildRecordCard(record, false); })
     .join('');
 }
-    } catch (error) {
-      console.error(error);
-    }
-  }
 
   function setDefaultChoice(groupId, value) {
     var group = document.getElementById(groupId);
