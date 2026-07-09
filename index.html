@@ -223,6 +223,46 @@
   <script>
   var dbPromise = null;
 
+  var els = {
+    openModalButton: document.getElementById('openModalButton'),
+    closeModalButton: document.getElementById('closeModalButton'),
+    recordModal: document.getElementById('recordModal'),
+    saveRecordButton: document.getElementById('saveRecordButton'),
+    recordsList: document.getElementById('recordsList'),
+    latestRecord: document.getElementById('latestRecord'),
+    modalTitle: document.getElementById('modalTitle'),
+    searchInput: document.getElementById('searchInput'),
+    searchResultText: document.getElementById('searchResultText'),
+    moodInput: document.getElementById('moodInput'),
+    dateInput: document.getElementById('dateInput'),
+    placeInput: document.getElementById('placeInput'),
+    noteInput: document.getElementById('noteInput'),
+    photoInput: document.getElementById('photoInput'),
+    photoPreview: document.getElementById('photoPreview'),
+    photoStatus: document.getElementById('photoStatus'),
+    detailModal: document.getElementById('detailModal'),
+    detailSheet: document.getElementById('detailSheet'),
+    closeDetailButton: document.getElementById('closeDetailButton'),
+    detailMood: document.getElementById('detailMood'),
+    detailNote: document.getElementById('detailNote'),
+    detailPhoto: document.getElementById('detailPhoto'),
+    detailEmptyPhoto: document.getElementById('detailEmptyPhoto'),
+    detailInfoBlock: document.getElementById('detailInfoBlock'),
+    detailEditButton: document.getElementById('detailEditButton'),
+    detailDeleteButton: document.getElementById('detailDeleteButton'),
+    toastMessage: document.getElementById('toastMessage')
+  };
+
+  var state = {
+    editingRecordId: null,
+    currentDetailId: null,
+    currentPhotoData: '',
+    currentPhotoBlob: null,
+    currentSearchTerm: '',
+    toastTimer: null,
+    shouldAnimateLatestCard: false
+  };
+
   function openDatabase() {
     if (dbPromise) return dbPromise;
 
@@ -252,41 +292,6 @@
 
     return dbPromise;
   }
-
-  var openModalButton = document.getElementById('openModalButton');
-  var closeModalButton = document.getElementById('closeModalButton');
-  var recordModal = document.getElementById('recordModal');
-  var saveRecordButton = document.getElementById('saveRecordButton');
-  var recordsList = document.getElementById('recordsList');
-  var latestRecord = document.getElementById('latestRecord');
-  var modalTitle = document.getElementById('modalTitle');
-  var searchInput = document.getElementById('searchInput');
-  var searchResultText = document.getElementById('searchResultText');
-  var moodInput = document.getElementById('moodInput');
-  var dateInput = document.getElementById('dateInput');
-  var placeInput = document.getElementById('placeInput');
-  var noteInput = document.getElementById('noteInput');
-  var photoInput = document.getElementById('photoInput');
-  var photoPreview = document.getElementById('photoPreview');
-  var photoStatus = document.getElementById('photoStatus');
-  var detailModal = document.getElementById('detailModal');
-  var detailSheet = document.getElementById('detailSheet');
-  var closeDetailButton = document.getElementById('closeDetailButton');
-  var detailMood = document.getElementById('detailMood');
-  var detailNote = document.getElementById('detailNote');
-  var detailPhoto = document.getElementById('detailPhoto');
-  var detailEmptyPhoto = document.getElementById('detailEmptyPhoto');
-  var detailInfoBlock = document.getElementById('detailInfoBlock');
-  var detailEditButton = document.getElementById('detailEditButton');
-  var detailDeleteButton = document.getElementById('detailDeleteButton');
-  var editingRecordId = null;
-  var currentDetailId = null;
-  var currentPhotoData = '';
-  var currentPhotoBlob = null;
-  var currentSearchTerm = '';
-  var toastMessage = document.getElementById('toastMessage');
-  var toastTimer = null;
-  var shouldAnimateLatestCard = false;
 
   function getTodayValue() {
     var today = new Date();
@@ -319,6 +324,7 @@
   function activateChoiceGroup(groupId) {
     var group = document.getElementById(groupId);
     var buttons = group.querySelectorAll('.choice-button');
+
     buttons.forEach(function (button) {
       button.addEventListener('click', function () {
         buttons.forEach(function (btn) {
@@ -422,6 +428,7 @@
   function getFilteredRecords(records, searchTerm) {
     var query = (searchTerm || '').trim().toLowerCase();
     if (!query) return records;
+
     return records.filter(function (record) {
       return String(record.mood || '').toLowerCase().includes(query)
         || String(record.place || '').toLowerCase().includes(query)
@@ -431,11 +438,11 @@
   }
 
   function showToast(message) {
-    if (toastTimer) clearTimeout(toastTimer);
-    toastMessage.textContent = message;
-    toastMessage.classList.add('show');
-    toastTimer = setTimeout(function () {
-      toastMessage.classList.remove('show');
+    if (state.toastTimer) clearTimeout(state.toastTimer);
+    els.toastMessage.textContent = message;
+    els.toastMessage.classList.add('show');
+    state.toastTimer = setTimeout(function () {
+      els.toastMessage.classList.remove('show');
     }, 1800);
   }
 
@@ -465,76 +472,86 @@
   }
 
   async function renderRecords() {
-  try {
-    var records = await getRecords();
-  } catch (error) {
-    console.error('getRecords 오류:', error);
-    // DB가 아직 없거나 열기 실패했을 때도 기본 화면은 보여주기
-    latestRecord.innerHTML = '';
-    searchResultText.textContent = '전체 기록 0건';
-    recordsList.innerHTML =
-      '<div class="empty-state">아직 남겨둔 기억이 없습니다. 첫 캠핑의 분위기부터 천천히 담아보세요.</div>';
-    return;
+    try {
+      var records = await getRecords();
+    } catch (error) {
+      console.error('getRecords 오류:', error);
+      els.latestRecord.innerHTML = '';
+      els.searchResultText.textContent = '전체 기록 0건';
+      els.recordsList.innerHTML =
+        '<div class="empty-state">아직 남겨둔 기억이 없습니다. 첫 캠핑의 분위기부터 천천히 담아보세요.</div>';
+      return;
+    }
+
+    if (!Array.isArray(records) || records.length === 0) {
+      els.latestRecord.innerHTML = '';
+      els.searchResultText.textContent = '전체 기록 0건';
+      els.recordsList.innerHTML =
+        '<div class="empty-state">아직 남겨둔 기억이 없습니다. 첫 캠핑의 분위기부터 천천히 담아보세요.</div>';
+      return;
+    }
+
+    var latest = records[0];
+    els.latestRecord.innerHTML = buildRecordCard(latest, state.shouldAnimateLatestCard);
+    state.shouldAnimateLatestCard = false;
+
+    var remainingRecords = records.slice(1);
+    var filteredRemainingRecords = getFilteredRecords(remainingRecords, state.currentSearchTerm);
+
+    els.searchResultText.textContent = state.currentSearchTerm.trim()
+      ? '지난 기억들 검색 결과 ' + filteredRemainingRecords.length + '건'
+      : '지난 기억들 ' + remainingRecords.length + '건';
+
+    if (remainingRecords.length === 0) {
+      els.recordsList.innerHTML =
+        '<div class="empty-state">아직 지난 기억들은 없습니다. 다음 기록부터 이 아래에 차곡차곡 쌓입니다.</div>';
+      return;
+    }
+
+    if (state.currentSearchTerm.trim() && filteredRemainingRecords.length === 0) {
+      els.recordsList.innerHTML =
+        '<div class="empty-state">이번에는 찾는 기억이 보이지 않습니다. 분위기나 장소를 다르게 떠올려보세요.</div>';
+      return;
+    }
+
+    els.recordsList.innerHTML = filteredRemainingRecords
+      .map(function (record) { return buildRecordCard(record, false); })
+      .join('');
   }
-
-  if (!Array.isArray(records) || records.length === 0) {
-    latestRecord.innerHTML = '';
-    searchResultText.textContent = '전체 기록 0건';
-    recordsList.innerHTML =
-      '<div class="empty-state">아직 남겨둔 기억이 없습니다. 첫 캠핑의 분위기부터 천천히 담아보세요.</div>';
-    return;
-  }
-
-  var latest = records[0];
-  latestRecord.innerHTML = buildRecordCard(latest, shouldAnimateLatestCard);
-  shouldAnimateLatestCard = false;
-
-  var remainingRecords = records.slice(1);
-  var filteredRemainingRecords = getFilteredRecords(remainingRecords, currentSearchTerm);
-
-  searchResultText.textContent = currentSearchTerm.trim()
-    ? '지난 기억들 검색 결과 ' + filteredRemainingRecords.length + '건'
-    : '지난 기억들 ' + remainingRecords.length + '건';
-
-  if (remainingRecords.length === 0) {
-    recordsList.innerHTML =
-      '<div class="empty-state">아직 지난 기억들은 없습니다. 다음 기록부터 이 아래에 차곡차곡 쌓입니다.</div>';
-    return;
-  }
-
-  if (currentSearchTerm.trim() && filteredRemainingRecords.length === 0) {
-    recordsList.innerHTML =
-      '<div class="empty-state">이번에는 찾는 기억이 보이지 않습니다. 분위기나 장소를 다르게 떠올려보세요.</div>';
-    return;
-  }
-
-  recordsList.innerHTML = filteredRemainingRecords
-    .map(function (record) { return buildRecordCard(record, false); })
-    .join('');
-}
 
   function setDefaultChoice(groupId, value) {
     var group = document.getElementById(groupId);
     var buttons = group.querySelectorAll('.choice-button');
+
     buttons.forEach(function (button) {
       button.classList.toggle('active', button.getAttribute('data-value') === value);
     });
   }
 
+  function clearPhotoPreview() {
+    els.photoPreview.style.display = 'none';
+    els.photoPreview.removeAttribute('src');
+  }
+
+  function showPhotoPreview(src) {
+    els.photoPreview.src = src;
+    els.photoPreview.style.display = 'block';
+  }
+
   function resetForm() {
-    editingRecordId = null;
-    currentPhotoData = '';
-    modalTitle.textContent = '이번 기억 남기기';
-    saveRecordButton.textContent = '이 기억 저장하기';
-    saveRecordButton.disabled = false;
-    moodInput.value = '';
-    dateInput.value = getTodayValue();
-    placeInput.value = '';
-    noteInput.value = '';
-    photoInput.value = '';
-    photoPreview.style.display = 'none';
-    photoPreview.removeAttribute('src');
-    photoStatus.textContent = '';
+    state.editingRecordId = null;
+    state.currentPhotoData = '';
+    state.currentPhotoBlob = null;
+    els.modalTitle.textContent = '이번 기억 남기기';
+    els.saveRecordButton.textContent = '이 기억 저장하기';
+    els.saveRecordButton.disabled = false;
+    els.moodInput.value = '';
+    els.dateInput.value = getTodayValue();
+    els.placeInput.value = '';
+    els.noteInput.value = '';
+    els.photoInput.value = '';
+    clearPhotoPreview();
+    els.photoStatus.textContent = '';
     setDefaultChoice('stayGroup', '1박');
     setDefaultChoice('styleGroup', '솔로');
     setDefaultChoice('groundGroup', '파쇄석');
@@ -543,7 +560,7 @@
 
   function openCreateMode() {
     resetForm();
-    recordModal.classList.add('show');
+    els.recordModal.classList.add('show');
   }
 
   async function openEditMode(recordId) {
@@ -551,32 +568,31 @@
       var record = await findRecordById(recordId);
       if (!record) return;
 
-      editingRecordId = record.id;
-      currentPhotoData = record.photo || '';
-      modalTitle.textContent = '기억 수정하기';
-      saveRecordButton.textContent = '수정한 내용 저장하기';
-      saveRecordButton.disabled = false;
-      moodInput.value = record.mood || '';
-      dateInput.value = formatDateInput(record.date);
-      placeInput.value = record.place || '';
-      noteInput.value = record.note || '';
-      photoInput.value = '';
+      state.editingRecordId = record.id;
+      state.currentPhotoData = record.photo || '';
+      state.currentPhotoBlob = null;
+      els.modalTitle.textContent = '기억 수정하기';
+      els.saveRecordButton.textContent = '수정한 내용 저장하기';
+      els.saveRecordButton.disabled = false;
+      els.moodInput.value = record.mood || '';
+      els.dateInput.value = formatDateInput(record.date);
+      els.placeInput.value = record.place || '';
+      els.noteInput.value = record.note || '';
+      els.photoInput.value = '';
       setDefaultChoice('stayGroup', record.stay || '1박');
       setDefaultChoice('styleGroup', record.style || '솔로');
       setDefaultChoice('groundGroup', record.ground || '파쇄석');
       setDefaultChoice('weatherGroup', record.weather || '맑고 선선했어');
 
       if (record.photo) {
-        photoPreview.src = record.photo;
-        photoPreview.style.display = 'block';
-        photoStatus.textContent = '기존 사진이 유지됩니다. 새 사진을 고르면 교체됩니다.';
+        showPhotoPreview(record.photo);
+        els.photoStatus.textContent = '기존 사진이 유지됩니다. 새 사진을 고르면 교체됩니다.';
       } else {
-        photoPreview.style.display = 'none';
-        photoPreview.removeAttribute('src');
-        photoStatus.textContent = '사진이 없습니다. 새 사진을 추가할 수 있습니다.';
+        clearPhotoPreview();
+        els.photoStatus.textContent = '사진이 없습니다. 새 사진을 추가할 수 있습니다.';
       }
 
-      recordModal.classList.add('show');
+      els.recordModal.classList.add('show');
     } catch (error) {
       console.error(error);
     }
@@ -591,10 +607,10 @@
       var record = await findRecordById(recordId);
       if (!record) return;
 
-      currentDetailId = record.id;
-      detailMood.textContent = record.mood || '이름 없는 하루';
-      detailNote.textContent = record.note || '짧은 감상이 아직 없습니다.';
-      detailInfoBlock.innerHTML = ''
+      state.currentDetailId = record.id;
+      els.detailMood.textContent = record.mood || '이름 없는 하루';
+      els.detailNote.textContent = record.note || '짧은 감상이 아직 없습니다.';
+      els.detailInfoBlock.innerHTML = ''
         + buildDetailInfoRow('다녀온 날짜', record.date || '')
         + buildDetailInfoRow('캠핑장', record.place || '기록되지 않음')
         + buildDetailInfoRow('머문 시간', record.stay || '')
@@ -603,24 +619,24 @@
         + buildDetailInfoRow('그날의 날씨', record.weather || '맑고 선선했어');
 
       if (record.photo) {
-        detailPhoto.src = record.photo;
-        detailPhoto.classList.add('show');
-        detailEmptyPhoto.classList.remove('show');
+        els.detailPhoto.src = record.photo;
+        els.detailPhoto.classList.add('show');
+        els.detailEmptyPhoto.classList.remove('show');
       } else {
-        detailPhoto.removeAttribute('src');
-        detailPhoto.classList.remove('show');
-        detailEmptyPhoto.classList.add('show');
+        els.detailPhoto.removeAttribute('src');
+        els.detailPhoto.classList.remove('show');
+        els.detailEmptyPhoto.classList.add('show');
       }
 
-      detailModal.classList.add('show');
+      els.detailModal.classList.add('show');
     } catch (error) {
       console.error(error);
     }
   }
 
   function closeDetailView() {
-    detailModal.classList.remove('show');
-    currentDetailId = null;
+    els.detailModal.classList.remove('show');
+    state.currentDetailId = null;
   }
 
   function bytesToMB(bytes) {
@@ -641,123 +657,96 @@
     ctx.drawImage(source, 0, 0, Math.round(width), Math.round(height));
   }
 
-  function compressImage(file, callback) {
+  function getResizedDimensions(startWidth, startHeight, maxSize) {
+    var targetWidth = startWidth;
+    var targetHeight = startHeight;
+
+    if (startWidth > startHeight && startWidth > maxSize) {
+      targetHeight = Math.round(startHeight * (maxSize / startWidth));
+      targetWidth = maxSize;
+    } else if (startHeight >= startWidth && startHeight > maxSize) {
+      targetWidth = Math.round(startWidth * (maxSize / startHeight));
+      targetHeight = maxSize;
+    }
+
+    return {
+      width: targetWidth,
+      height: targetHeight
+    };
+  }
+
+  function downscaleImage(img, maxSize) {
+    var startWidth = img.width;
+    var startHeight = img.height;
+    var resized = getResizedDimensions(startWidth, startHeight, maxSize);
+
+    var sourceCanvas = createCanvas(startWidth, startHeight);
+    drawHighQuality(img, sourceCanvas, startWidth, startHeight);
+
+    var currentCanvas = sourceCanvas;
+    var currentWidth = startWidth;
+    var currentHeight = startHeight;
+
+    while (currentWidth * 0.5 > resized.width && currentHeight * 0.5 > resized.height) {
+      var stepWidth = Math.round(currentWidth * 0.5);
+      var stepHeight = Math.round(currentHeight * 0.5);
+      var stepCanvas = createCanvas(stepWidth, stepHeight);
+      drawHighQuality(currentCanvas, stepCanvas, stepWidth, stepHeight);
+      currentCanvas = stepCanvas;
+      currentWidth = stepWidth;
+      currentHeight = stepHeight;
+    }
+
+    var finalCanvas = createCanvas(resized.width, resized.height);
+    drawHighQuality(currentCanvas, finalCanvas, resized.width, resized.height);
+
+    return {
+      canvas: finalCanvas,
+      width: resized.width,
+      height: resized.height
+    };
+  }
+
+  function compressImageToBlob(file, callback) {
     var reader = new FileReader();
+
     reader.onload = function (e) {
       var img = new Image();
+
       img.onload = function () {
-        var maxSize = 960;
-        var startWidth = img.width;
-        var startHeight = img.height;
-        var targetWidth = startWidth;
-        var targetHeight = startHeight;
+        var result = downscaleImage(img, 960);
 
-        if (startWidth > startHeight && startWidth > maxSize) {
-          targetHeight = Math.round(startHeight * (maxSize / startWidth));
-          targetWidth = maxSize;
-        } else if (startHeight >= startWidth && startHeight > maxSize) {
-          targetWidth = Math.round(startWidth * (maxSize / startHeight));
-          targetHeight = maxSize;
-        }
-
-        var sourceCanvas = createCanvas(startWidth, startHeight);
-        drawHighQuality(img, sourceCanvas, startWidth, startHeight);
-
-        var currentCanvas = sourceCanvas;
-        var currentWidth = startWidth;
-        var currentHeight = startHeight;
-
-        while (currentWidth * 0.5 > targetWidth && currentHeight * 0.5 > targetHeight) {
-          var stepWidth = Math.round(currentWidth * 0.5);
-          var stepHeight = Math.round(currentHeight * 0.5);
-          var stepCanvas = createCanvas(stepWidth, stepHeight);
-          drawHighQuality(currentCanvas, stepCanvas, stepWidth, stepHeight);
-          currentCanvas = stepCanvas;
-          currentWidth = stepWidth;
-          currentHeight = stepHeight;
-        }
-
-        var finalCanvas = createCanvas(targetWidth, targetHeight);
-        drawHighQuality(currentCanvas, finalCanvas, targetWidth, targetHeight);
-        callback(finalCanvas.toDataURL('image/jpeg', 0.65), targetWidth, targetHeight);
+        result.canvas.toBlob(function (blob) {
+          callback(blob, result.width, result.height);
+        }, 'image/jpeg', 0.65);
       };
+
       img.src = e.target.result;
     };
+
     reader.readAsDataURL(file);
   }
 
-    function compressImageToBlob(file, callback) {
-  var reader = new FileReader();
-
-  reader.onload = function (e) {
-    var img = new Image();
-
-    img.onload = function () {
-      var maxSize = 960;
-      var startWidth = img.width;
-      var startHeight = img.height;
-      var targetWidth = startWidth;
-      var targetHeight = startHeight;
-
-      if (startWidth > startHeight && startWidth > maxSize) {
-        targetHeight = Math.round(startHeight * (maxSize / startWidth));
-        targetWidth = maxSize;
-      } else if (startHeight >= startWidth && startHeight > maxSize) {
-        targetWidth = Math.round(startWidth * (maxSize / startHeight));
-        targetHeight = maxSize;
-      }
-
-      var sourceCanvas = createCanvas(startWidth, startHeight);
-      drawHighQuality(img, sourceCanvas, startWidth, startHeight);
-
-      var currentCanvas = sourceCanvas;
-      var currentWidth = startWidth;
-      var currentHeight = startHeight;
-
-      while (currentWidth * 0.5 > targetWidth && currentHeight * 0.5 > targetHeight) {
-        var stepWidth = Math.round(currentWidth * 0.5);
-        var stepHeight = Math.round(currentHeight * 0.5);
-        var stepCanvas = createCanvas(stepWidth, stepHeight);
-        drawHighQuality(currentCanvas, stepCanvas, stepWidth, stepHeight);
-        currentCanvas = stepCanvas;
-        currentWidth = stepWidth;
-        currentHeight = stepHeight;
-      }
-
-      var finalCanvas = createCanvas(targetWidth, targetHeight);
-      drawHighQuality(currentCanvas, finalCanvas, targetWidth, targetHeight);
-
-      finalCanvas.toBlob(function (blob) {
-        callback(blob, targetWidth, targetHeight);
-      }, 'image/jpeg', 0.65);
-    };
-
-    img.src = e.target.result;
-  };
-
-  reader.readAsDataURL(file);
-}
-    
   function buildFormRecord() {
-    var rawDate = dateInput.value || getTodayValue();
+    var rawDate = els.dateInput.value || getTodayValue();
 
     return {
-      id: editingRecordId ? Number(editingRecordId) : Date.now(),
-      mood: moodInput.value.trim() || '이름 없는 하루',
+      id: state.editingRecordId ? Number(state.editingRecordId) : Date.now(),
+      mood: els.moodInput.value.trim() || '이름 없는 하루',
       date: formatDateDisplay(rawDate),
-      place: placeInput.value.trim() || '이름 없는 캠핑장',
+      place: els.placeInput.value.trim() || '이름 없는 캠핑장',
       stay: getActiveValue('stayGroup'),
       style: getActiveValue('styleGroup'),
       ground: getActiveValue('groundGroup'),
       weather: getActiveValue('weatherGroup') || '맑고 선선했어',
-      note: noteInput.value.trim() || '짧은 감상이 아직 없습니다.',
-      photo: currentPhotoData || ''
+      note: els.noteInput.value.trim() || '짧은 감상이 아직 없습니다.',
+      photo: state.currentPhotoData || ''
     };
   }
 
   async function submitRecord() {
     var record = buildFormRecord();
-    var isEditing = !!editingRecordId;
+    var isEditing = !!state.editingRecordId;
 
     try {
       if (isEditing) {
@@ -765,62 +754,62 @@
         showToast('기억을 가지런히 다듬어 두었습니다.');
       } else {
         await saveRecord(record);
-        shouldAnimateLatestCard = true;
+        state.shouldAnimateLatestCard = true;
         showToast('새로운 기억을 조용히 놓아두었습니다.');
       }
 
       await renderRecords();
-      recordModal.classList.remove('show');
+      els.recordModal.classList.remove('show');
       resetForm();
     } catch (error) {
       console.error(error);
     }
   }
 
-  openModalButton.addEventListener('click', openCreateMode);
+  els.openModalButton.addEventListener('click', openCreateMode);
 
-  closeModalButton.addEventListener('click', function () {
-    recordModal.classList.remove('show');
+  els.closeModalButton.addEventListener('click', function () {
+    els.recordModal.classList.remove('show');
     resetForm();
   });
 
-  recordModal.addEventListener('click', function (e) {
-    if (e.target === recordModal) {
-      recordModal.classList.remove('show');
+  els.recordModal.addEventListener('click', function (e) {
+    if (e.target === els.recordModal) {
+      els.recordModal.classList.remove('show');
       resetForm();
     }
   });
 
-  closeDetailButton.addEventListener('click', function (e) {
+  els.closeDetailButton.addEventListener('click', function (e) {
     e.preventDefault();
     e.stopPropagation();
     closeDetailView();
   });
 
-  detailSheet.addEventListener('click', function (e) {
+  els.detailSheet.addEventListener('click', function (e) {
     e.stopPropagation();
   });
 
-  detailModal.addEventListener('click', function (e) {
-    if (e.target === detailModal) closeDetailView();
+  els.detailModal.addEventListener('click', function (e) {
+    if (e.target === els.detailModal) closeDetailView();
   });
 
-  detailEditButton.addEventListener('click', function (e) {
+  els.detailEditButton.addEventListener('click', function (e) {
     e.preventDefault();
     e.stopPropagation();
-    if (!currentDetailId) return;
-    var recordId = currentDetailId;
-    detailModal.classList.remove('show');
+    if (!state.currentDetailId) return;
+    var recordId = state.currentDetailId;
+    els.detailModal.classList.remove('show');
     openEditMode(recordId);
   });
 
-  detailDeleteButton.addEventListener('click', function (e) {
+  els.detailDeleteButton.addEventListener('click', function (e) {
     e.preventDefault();
     e.stopPropagation();
-    if (!currentDetailId) return;
+    if (!state.currentDetailId) return;
     if (!window.confirm('이 기록을 삭제할까요?')) return;
 
-    deleteRecord(currentDetailId)
+    deleteRecord(state.currentDetailId)
       .then(function () {
         closeDetailView();
         renderRecords();
@@ -830,46 +819,43 @@
       });
   });
 
-  searchInput.addEventListener('input', function (e) {
-    currentSearchTerm = e.target.value || '';
+  els.searchInput.addEventListener('input', function (e) {
+    state.currentSearchTerm = e.target.value || '';
     renderRecords();
   });
 
-  photoInput.addEventListener('change', function () {
-    var file = photoInput.files[0];
+  els.photoInput.addEventListener('change', function () {
+    var file = els.photoInput.files[0];
 
     if (!file) {
-      if (currentPhotoData) {
-        photoPreview.src = currentPhotoData;
-        photoPreview.style.display = 'block';
-        photoStatus.textContent = '기존 사진이 유지됩니다.';
+      if (state.currentPhotoData) {
+        showPhotoPreview(state.currentPhotoData);
+        els.photoStatus.textContent = '기존 사진이 유지됩니다.';
       } else {
-        photoPreview.style.display = 'none';
-        photoPreview.removeAttribute('src');
-        photoStatus.textContent = '';
+        clearPhotoPreview();
+        els.photoStatus.textContent = '';
       }
 
-      saveRecordButton.disabled = false;
-      saveRecordButton.textContent = editingRecordId ? '수정한 내용 저장하기' : '이 기억 저장하기';
+      els.saveRecordButton.disabled = false;
+      els.saveRecordButton.textContent = state.editingRecordId ? '수정한 내용 저장하기' : '이 기억 저장하기';
       return;
     }
 
-    saveRecordButton.disabled = true;
-    saveRecordButton.textContent = '사진 처리 중...';
-    photoStatus.textContent = '사진을 더 자연스럽게 보이도록 조정하는 중입니다.';
+    els.saveRecordButton.disabled = true;
+    els.saveRecordButton.textContent = '사진 처리 중...';
+    els.photoStatus.textContent = '사진을 더 자연스럽게 보이도록 조정하는 중입니다.';
 
-  compressImageToBlob(file, function (blob, width, height) {
-    currentPhotoBlob = blob;
-    currentPhotoData = URL.createObjectURL(blob);
-    photoPreview.src = currentPhotoData;
-    photoPreview.style.display = 'block';
-    photoStatus.textContent = '원본 ' + bytesToMB(file.size) + 'MB → 앱용 썸네일로 축소 완료 (' + width + '×' + height + ')';
-    saveRecordButton.disabled = false;
-    saveRecordButton.textContent = editingRecordId ? '수정한 내용 저장하기' : '이 기억 저장하기';
-  });
+    compressImageToBlob(file, function (blob, width, height) {
+      state.currentPhotoBlob = blob;
+      state.currentPhotoData = URL.createObjectURL(blob);
+      showPhotoPreview(state.currentPhotoData);
+      els.photoStatus.textContent = '원본 ' + bytesToMB(file.size) + 'MB → 앱용 썸네일로 축소 완료 (' + width + '×' + height + ')';
+      els.saveRecordButton.disabled = false;
+      els.saveRecordButton.textContent = state.editingRecordId ? '수정한 내용 저장하기' : '이 기억 저장하기';
+    });
   });
 
-  saveRecordButton.addEventListener('click', function () {
+  els.saveRecordButton.addEventListener('click', function () {
     submitRecord();
   });
 
@@ -877,6 +863,7 @@
     var card = e.target.closest('.trip-card');
     if (!card) return;
     if (e.target.closest('.edit-button') || e.target.closest('.delete-button')) return;
+
     var recordId = card.getAttribute('data-id');
     if (!recordId) return;
     openDetailView(recordId);
