@@ -475,7 +475,7 @@
       reader.onload = function(e) {
         var img = new Image();
         img.onload = function() {
-          var maxSize = 1400;
+          var maxSize = 960;
           var startWidth = img.width;
           var startHeight = img.height;
           var targetWidth = startWidth;
@@ -503,7 +503,7 @@
           }
           var finalCanvas = createCanvas(targetWidth, targetHeight);
           drawHighQuality(currentCanvas, finalCanvas, targetWidth, targetHeight);
-          callback(finalCanvas.toDataURL('image/jpeg', 0.8), targetWidth, targetHeight);
+          callback(finalCanvas.toDataURL('image/jpeg', 0.65), targetWidth, targetHeight);
         };
         img.src = e.target.result;
       };
