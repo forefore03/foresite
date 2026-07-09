@@ -685,6 +685,58 @@
     reader.readAsDataURL(file);
   }
 
+    function compressImageToBlob(file, callback) {
+  var reader = new FileReader();
+
+  reader.onload = function (e) {
+    var img = new Image();
+
+    img.onload = function () {
+      var maxSize = 960;
+      var startWidth = img.width;
+      var startHeight = img.height;
+      var targetWidth = startWidth;
+      var targetHeight = startHeight;
+
+      if (startWidth > startHeight && startWidth > maxSize) {
+        targetHeight = Math.round(startHeight * (maxSize / startWidth));
+        targetWidth = maxSize;
+      } else if (startHeight >= startWidth && startHeight > maxSize) {
+        targetWidth = Math.round(startWidth * (maxSize / startHeight));
+        targetHeight = maxSize;
+      }
+
+      var sourceCanvas = createCanvas(startWidth, startHeight);
+      drawHighQuality(img, sourceCanvas, startWidth, startHeight);
+
+      var currentCanvas = sourceCanvas;
+      var currentWidth = startWidth;
+      var currentHeight = startHeight;
+
+      while (currentWidth * 0.5 > targetWidth && currentHeight * 0.5 > targetHeight) {
+        var stepWidth = Math.round(currentWidth * 0.5);
+        var stepHeight = Math.round(currentHeight * 0.5);
+        var stepCanvas = createCanvas(stepWidth, stepHeight);
+        drawHighQuality(currentCanvas, stepCanvas, stepWidth, stepHeight);
+        currentCanvas = stepCanvas;
+        currentWidth = stepWidth;
+        currentHeight = stepHeight;
+      }
+
+      var finalCanvas = createCanvas(targetWidth, targetHeight);
+      drawHighQuality(currentCanvas, finalCanvas, targetWidth, targetHeight);
+
+      finalCanvas.toBlob(function (blob) {
+        callback(blob, targetWidth, targetHeight);
+      }, 'image/jpeg', 0.65);
+    };
+
+    img.src = e.target.result;
+  };
+
+  reader.readAsDataURL(file);
+}
+    
   function buildFormRecord() {
     var rawDate = dateInput.value || getTodayValue();
 
