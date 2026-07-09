@@ -339,7 +339,7 @@
       request.onsuccess = function () {
         var records = request.result || [];
         records.sort(function (a, b) {
-          return (b.createdAt || b.id || 0) - (a.createdAt || a.id || 0);
+          return (b.date || '').localeCompare(a.date || '');
         });
         resolve(records);
       };
