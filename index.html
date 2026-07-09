@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>foresite</title>
+  <style>
+    :root {
+      --bg: #f5f3ee;
+      --card: #fcfbf8;
+      --card-2: #f0ede6;
+      --card-3: #f7f4ee;
+      --text: #1f1d19;
+      --text-soft: #3f3a33;
+      --muted: #7a766d;
+      --line: #d9d4ca;
+      --accent: #466f5e;
+      --accent-soft: #dce6df;
+      --danger: #8d4a4a;
+      --danger-soft: #f3e2e2;
+      --edit: #5b6f8f;
+      --edit-soft: #e3e9f3;
+      --white: #ffffff;
+      --shadow: 0 10px 30px rgba(31, 29, 25, 0.08);
+      --shadow-strong: 0 14px 36px rgba(31, 29, 25, 0.16);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI", sans-serif;
+      background: linear-gradient(to bottom, #f8f6f1 0%, #f1eee7 100%);
+      color: var(--text);
+    }
+    .app { max-width: 430px; min-height: 100vh; margin: 0 auto; padding: 20px 16px 32px; }
+    .topbar { padding-top: 10px; margin-bottom: 24px; }
+    .brand { font-size: 40px; font-weight: 800; letter-spacing: -1px; margin: 0 0 6px; }
+    .subtitle { font-size: 18px; color: var(--muted); margin: 0; }
+    .hero-card,.trip-card,.modal-sheet,.search-card,.detail-sheet { background: var(--card); border: 1px solid rgba(217, 212, 202, 0.8); box-shadow: var(--shadow); }
+    .hero-card { border-radius: 24px; padding: 20px; margin-bottom: 18px; }
+    .hero-label { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+    .hero-title { font-size: 28px; line-height: 1.2; font-weight: 700; margin: 0 0 10px; }
+    .hero-text { font-size: 16px; line-height: 1.5; color: var(--muted); margin: 0 0 18px; }
+    .primary-button,.choice-button,.close-button,.delete-button,.edit-button,.detail-back-button { border: none; cursor: pointer; font-family: inherit; }
+    .primary-button { width: 100%; border-radius: 16px; background: var(--accent); color: var(--white); font-size: 17px; font-weight: 700; padding: 16px; }
+    .primary-button:disabled { opacity: 0.55; cursor: not-allowed; }
+    .section { margin-top: 26px; }
+    .search-card { border-radius: 18px; padding: 14px; margin-top: 18px; margin-bottom: 18px; }
+    .search-label { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+    .search-input { width: 100%; height: 34px; border: 1px solid var(--line); border-radius: 999px; background: #f7f4ee; color: var(--text); font-size: 16px; padding: 0 14px; font-family: inherit; outline: none; -webkit-appearance: none; appearance: none; }
+    .search-helper,.search-result-text { font-size: 13px; line-height: 1.4; margin-top: 8px; }
+    .search-helper { color: var(--muted); }
+    .search-result-text { color: var(--accent); }
+    .memory-title { font-size: 20px; font-weight: 700; margin: 0 0 14px; }
+    .trip-card { border-radius: 18px; padding: 16px; margin-bottom: 14px; cursor: pointer; }
+    .trip-card:active { transform: scale(0.995); }
+    .trip-mood { font-size: 22px; line-height: 1.2; font-weight: 800; margin: 0 0 8px; letter-spacing: -0.3px; }
+    .trip-note { font-size: 15px; line-height: 1.55; color: var(--text-soft); margin: 0 0 14px; }
+    .trip-photo { width: 100%; max-height: 210px; object-fit: cover; border-radius: 18px; margin-bottom: 14px; border: 1px solid rgba(217, 212, 202, 0.8); }
+    .trip-summary-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .meta-chip { background: var(--card-2); color: var(--muted); font-size: 13px; padding: 7px 10px; border-radius: 999px; }
+    .meta-chip.weather-chip { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+    .trip-detail-hint { font-size: 12px; color: var(--muted); margin-top: 10px; }
+    .modal,.detail-modal { position: fixed; inset: 0; background: rgba(25, 24, 20, 0.38); display: none; align-items: flex-end; justify-content: center; z-index: 1000; }
+    .modal.show,.detail-modal.show { display: flex; }
+    .modal-sheet,.detail-sheet { width: min(430px, 100%); border-radius: 28px 28px 0 0; padding: 18px 16px 28px; max-height: 88vh; overflow-y: auto; background: #fbfaf7; }
+    .detail-sheet { box-shadow: var(--shadow-strong); padding-bottom: 34px; }
+    .handle { width: 44px; height: 5px; background: #d7d1c7; border-radius: 999px; margin: 0 auto 18px; }
+    .modal-top,.detail-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; gap: 12px; }
+    .modal-title { font-size: 24px; font-weight: 800; margin: 0; }
+    .detail-back-button,.close-button { background: #ece8df; color: var(--text); border-radius: 999px; padding: 10px 14px; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+    .detail-label { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+    .detail-mood { font-size: 30px; line-height: 1.18; font-weight: 800; margin: 0 0 10px; letter-spacing: -0.4px; }
+    .detail-note { font-size: 16px; line-height: 1.65; color: var(--text-soft); margin: 0 0 18px; }
+    .detail-photo { width: 100%; max-height: 320px; object-fit: cover; border-radius: 22px; margin-bottom: 20px; border: 1px solid rgba(217, 212, 202, 0.8); display: none; }
+    .detail-photo.show { display: block; }
+    .detail-empty-photo { display: none; border: 1px dashed var(--line); border-radius: 20px; padding: 24px 18px; color: var(--muted); font-size: 14px; line-height: 1.5; background: rgba(252, 251, 248, 0.7); margin-bottom: 20px; }
+    .detail-empty-photo.show { display: block; }
+    .detail-info-block { background: var(--card-3); border: 1px solid rgba(217, 212, 202, 0.72); border-radius: 20px; padding: 14px; margin-bottom: 18px; }
+    .detail-info-row { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(217, 212, 202, 0.7); }
+    .detail-info-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .detail-info-row:first-child { padding-top: 0; }
+    .detail-info-label { font-size: 13px; color: var(--muted); flex-shrink: 0; }
+    .detail-info-value { font-size: 14px; color: var(--text); text-align: right; line-height: 1.45; }
+    .detail-action-row { display: flex; gap: 8px; justify-content: flex-start; }
+    .edit-button,.delete-button { height: 30px; padding: 0 12px; border-radius: 999px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; line-height: 1; white-space: nowrap; }
+    .edit-button { background: var(--edit-soft); color: var(--edit); }
+    .delete-button { background: var(--danger-soft); color: var(--danger); }
+    .field { margin-bottom: 20px; }
+    .field-label { font-size: 15px; font-weight: 700; margin-bottom: 10px; display: block; }
+    .choice-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .choice-button { background: #efebe4; color: #4b473f; border-radius: 999px; padding: 12px 14px; font-size: 14px; font-weight: 700; }
+    .choice-button.active { background: var(--accent); color: var(--white); }
+    .text-input,.text-area,.file-input,.date-input { width: 100%; border: 1px solid var(--line); border-radius: 16px; background: #f7f4ee; color: var(--text); font-size: 16px; padding: 14px 16px; font-family: inherit; outline: none; }
+    .text-area { resize: vertical; min-height: 96px; line-height: 1.5; }
+    .helper-text,.status-text { font-size: 13px; margin-top: 8px; line-height: 1.4; }
+    .helper-text { color: var(--muted); }
+    .status-text { color: var(--accent); }
+    .photo-preview { width: 100%; max-height: 220px; border-radius: 18px; margin-top: 12px; border: 1px solid rgba(217, 212, 202, 0.8); object-fit: cover; }
+    .save-placeholder { font-size: 14px; color: var(--muted); text-align: center; margin-top: 16px; }
+    .empty-state { background: rgba(252, 251, 248, 0.7); border: 1px dashed var(--line); border-radius: 18px; padding: 20px; color: var(--muted); font-size: 15px; line-height: 1.5; }
+    .toast { position: fixed; top: 18px; left: 50%; transform: translateX(-50%) translateY(-8px); width: calc(100% - 32px); max-width: 398px; background: rgba(48, 74, 63, 0.94); color: #f6f4ef; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 12px 14px; font-size: 14px; line-height: 1.4; box-shadow: 0 10px 30px rgba(31, 29, 25, 0.16); backdrop-filter: blur(12px); opacity: 0; pointer-events: none; transition: opacity 220ms ease, transform 220ms ease; z-index: 1200; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <h1 class="brand">foresite</h1>
+      <p class="subtitle">솔로 오토캠핑 기록 앱</p>
+    </div>
+    <section class="hero-card">
+      <div class="hero-label">좋았던 날은 오래 남기고 싶어서</div>
+      <h2 class="hero-title">그날의 바람과 분위기를<br>천천히 다시 꺼내봅니다.</h2>
+      <p class="hero-text">짧게 남긴 감상과 일정한 기록이, 그날의 공기까지 다시 떠올리게 해줍니다.</p>
+      <button type="button" class="primary-button" id="openModalButton">이번 기억 남기기</button>
+    </section>
+    <section class="section">
+      <div id="latestRecord"></div>
+      <section class="search-card">
+        <div class="search-label">지난 기억 찾기</div>
+        <input type="search" id="searchInput" class="search-input" placeholder="분위기나 장소로 찾아보세요">
+        <div class="search-helper">떠올리고 싶은 기억을 가볍게 꺼내보세요.</div>
+        <div class="search-result-text" id="searchResultText"></div>
+      </section>
+      <h3 class="memory-title">지난 기억들</h3>
+      <div id="recordsList"></div>
+    </section>
+  </div>
+  <div class="toast" id="toastMessage" aria-live="polite" aria-atomic="true"></div>
+
+  <div class="modal" id="recordModal">
+    <div class="modal-sheet">
+      <div class="handle"></div>
+      <div class="modal-top">
+        <h2 class="modal-title" id="modalTitle">이번 기억 남기기</h2>
+        <button type="button" class="close-button" id="closeModalButton">닫기</button>
+      </div>
+      <div class="field">
+        <label class="field-label" for="moodInput">그날의 분위기</label>
+        <input type="text" id="moodInput" class="text-input" placeholder="예: 고요함, 눅눅함, 해방감, 선선함">
+        <div class="helper-text">그날을 한 단어처럼 남겨보세요. 상세 화면의 제목이 됩니다.</div>
+      </div>
+      <div class="field">
+        <label class="field-label" for="dateInput">다녀온 날짜</label>
+        <input type="date" id="dateInput" class="date-input">
+        <div class="helper-text">오늘 날짜가 기본으로 들어가며, 지난 날짜로 바꿔 저장할 수 있습니다.</div>
+      </div>
+      <div class="field">
+        <label class="field-label" for="placeInput">캠핑장</label>
+        <input type="text" id="placeInput" class="text-input" placeholder="예: 난지캠핑장">
+      </div>
+      <div class="field">
+        <div class="field-label">얼마나 머물렀나요</div>
+        <div class="choice-grid" id="stayGroup">
+          <button type="button" class="choice-button" data-value="당일">당일</button>
+          <button type="button" class="choice-button active" data-value="1박">1박</button>
+          <button type="button" class="choice-button" data-value="2박+">2박+</button>
+        </div>
+      </div>
+      <div class="field">
+        <div class="field-label">누구와 함께였나요</div>
+        <div class="choice-grid" id="styleGroup">
+          <button type="button" class="choice-button active" data-value="솔로">솔로</button>
+          <button type="button" class="choice-button" data-value="2인">2인</button>
+        </div>
+      </div>
+      <div class="field">
+        <div class="field-label">바닥 느낌은 어땠나요</div>
+        <div class="choice-grid" id="groundGroup">
+          <button type="button" class="choice-button" data-value="데크">데크</button>
+          <button type="button" class="choice-button active" data-value="파쇄석">파쇄석</button>
+          <button type="button" class="choice-button" data-value="잔디">잔디</button>
+          <button type="button" class="choice-button" data-value="흙">흙</button>
+        </div>
+      </div>
+      <div class="field">
+        <div class="field-label">그날의 날씨</div>
+        <div class="choice-grid" id="weatherGroup">
+          <button type="button" class="choice-button active" data-value="맑고 선선했어">맑고 선선했어</button>
+          <button type="button" class="choice-button" data-value="햇살이 길었어">햇살이 길었어</button>
+          <button type="button" class="choice-button" data-value="바람이 많았어">바람이 많았어</button>
+          <button type="button" class="choice-button" data-value="비 냄새가 났어">비 냄새가 났어</button>
+          <button type="button" class="choice-button" data-value="공기가 축축했어">공기가 축축했어</button>
+          <button type="button" class="choice-button" data-value="너무 더웠어">너무 더웠어</button>
+          <button type="button" class="choice-button" data-value="아주 추웠어">아주 추웠어</button>
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label" for="noteInput">짧은 감상</label>
+        <textarea id="noteInput" class="text-area" rows="3" placeholder="예: 텐트를 치고 나니 공기가 느리게 가라앉는 느낌이었다."></textarea>
+      </div>
+      <div class="field">
+        <label class="field-label" for="photoInput">사진 첨부</label>
+        <input type="file" id="photoInput" accept="image/*" class="file-input">
+        <div class="helper-text">원본 대신 큰 썸네일용으로 자동 축소 저장합니다.</div>
+        <div class="status-text" id="photoStatus"></div>
+        <img id="photoPreview" class="photo-preview" alt="선택한 사진 미리보기" style="display:none;">
+      </div>
+      <button type="button" class="primary-button" id="saveRecordButton">이 기억 저장하기</button>
+      <div class="save-placeholder">저장하면 가장 위에 조용히 놓아둘게요.</div>
+    </div>
+  </div>
+  <div class="detail-modal" id="detailModal">
+    <div class="detail-sheet" id="detailSheet">
+      <div class="handle"></div>
+      <div class="detail-top">
+        <div class="detail-label">그날의 기억</div>
+        <button type="button" class="detail-back-button" id="closeDetailButton">닫기</button>
+      </div>
+      <h2 class="detail-mood" id="detailMood">고요함</h2>
+      <p class="detail-note" id="detailNote">짧은 감상</p>
+      <img id="detailPhoto" class="detail-photo" alt="캠핑 기록 상세 사진">
+      <div id="detailEmptyPhoto" class="detail-empty-photo">남겨둔 사진은 없지만, 그날의 분위기는 감상과 기록 안에 남아 있습니다.</div>
+      <div class="detail-info-block" id="detailInfoBlock"></div>
+      <div class="detail-action-row">
+        <button type="button" class="edit-button" id="detailEditButton">수정</button>
+        <button type="button" class="delete-button" id="detailDeleteButton">삭제</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    var openModalButton = document.getElementById('openModalButton');
+    var closeModalButton = document.getElementById('closeModalButton');
+    var recordModal = document.getElementById('recordModal');
+    var saveRecordButton = document.getElementById('saveRecordButton');
+    var recordsList = document.getElementById('recordsList');
+    var latestRecord = document.getElementById('latestRecord');
+    var modalTitle = document.getElementById('modalTitle');
+    var searchInput = document.getElementById('searchInput');
+    var searchResultText = document.getElementById('searchResultText');
+    var moodInput = document.getElementById('moodInput');
+    var dateInput = document.getElementById('dateInput');
+    var placeInput = document.getElementById('placeInput');
+    var noteInput = document.getElementById('noteInput');
+    var photoInput = document.getElementById('photoInput');
+    var photoPreview = document.getElementById('photoPreview');
+    var photoStatus = document.getElementById('photoStatus');
+    var detailModal = document.getElementById('detailModal');
+    var detailSheet = document.getElementById('detailSheet');
+    var closeDetailButton = document.getElementById('closeDetailButton');
+    var detailMood = document.getElementById('detailMood');
+    var detailNote = document.getElementById('detailNote');
+    var detailPhoto = document.getElementById('detailPhoto');
+    var detailEmptyPhoto = document.getElementById('detailEmptyPhoto');
+    var detailInfoBlock = document.getElementById('detailInfoBlock');
+    var detailEditButton = document.getElementById('detailEditButton');
+    var detailDeleteButton = document.getElementById('detailDeleteButton');
+    var editingRecordId = null;
+    var currentDetailId = null;
+    var currentPhotoData = '';
+    var currentSearchTerm = '';
+    var toastMessage = document.getElementById('toastMessage');
+    var toastTimer = null;
+    var shouldAnimateLatestCard = false;
+
+    function getTodayValue() {
+      var today = new Date();
+      var y = today.getFullYear();
+      var m = String(today.getMonth() + 1).padStart(2, '0');
+      var d = String(today.getDate()).padStart(2, '0');
+      return y + '-' + m + '-' + d;
+    }
+    function formatDateDisplay(dateValue) {
+      if (!dateValue) return '';
+      var parts = dateValue.split('-');
+      if (parts.length !== 3) return dateValue;
+      return parts[0] + '.' + parts[1] + '.' + parts[2];
+    }
+    function formatDateInput(displayValue) {
+      if (!displayValue) return getTodayValue();
+      var parts = displayValue.split('.');
+      if (parts.length !== 3) return getTodayValue();
+      return parts[0] + '-' + parts[1] + '-' + parts[2];
+    }
+    function getActiveValue(groupId) {
+      var group = document.getElementById(groupId);
+      var active = group.querySelector('.choice-button.active');
+      return active ? active.getAttribute('data-value') : '';
+    }
+    function activateChoiceGroup(groupId) {
+      var group = document.getElementById(groupId);
+      var buttons = group.querySelectorAll('.choice-button');
+      buttons.forEach(function(button) {
+        button.addEventListener('click', function() {
+          buttons.forEach(function(btn) { btn.classList.remove('active'); });
+          button.classList.add('active');
+        });
+      });
+    }
+    function getRecords() {
+      var saved = localStorage.getItem('foresiteRecords');
+      if (!saved) return [];
+      try { return JSON.parse(saved); } catch (e) { return []; }
+    }
+    function saveRecords(records) { localStorage.setItem('foresiteRecords', JSON.stringify(records)); }
+    function findRecordById(recordId) {
+      var records = getRecords();
+      return records.find(function(record) { return String(record.id) === String(recordId); });
+    }
+    function deleteRecord(recordId) {
+      var records = getRecords();
+      var nextRecords = records.filter(function(record) { return String(record.id) !== String(recordId); });
+      saveRecords(nextRecords);
+      closeDetailView();
+      renderRecords();
+    }
+    function updateRecord(updatedRecord) {
+      var records = getRecords();
+      var nextRecords = records.map(function(record) {
+        if (String(record.id) === String(updatedRecord.id)) return updatedRecord;
+        return record;
+      });
+      saveRecords(nextRecords);
+      renderRecords();
+    }
+    function getFilteredRecords(records, searchTerm) {
+      var query = (searchTerm || '').trim().toLowerCase();
+      if (!query) return records;
+      return records.filter(function(record) {
+        return String(record.mood || '').toLowerCase().includes(query)
+          || String(record.place || '').toLowerCase().includes(query)
+          || String(record.note || '').toLowerCase().includes(query)
+          || String(record.weather || '').toLowerCase().includes(query);
+      });
+    }
+    function showToast(message) {
+      if (toastTimer) clearTimeout(toastTimer);
+      toastMessage.textContent = message;
+      toastMessage.classList.add('show');
+      toastTimer = setTimeout(function() { toastMessage.classList.remove('show'); }, 1800);
+    }
+    function escapeHtml(text) {
+      return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+    }
+    function buildRecordCard(record, animate) {
+      var html = '';
+      html += '<article class="trip-card' + (animate ? ' card-enter' : '') + '" data-id="' + record.id + '">';
+      html += '<h4 class="trip-mood">' + escapeHtml(record.mood || '이름 없는 하루') + '</h4>';
+      html += '<p class="trip-note">' + escapeHtml(record.note || '짧은 감상이 아직 없습니다.') + '</p>';
+      if (record.photo) html += '<img src="' + record.photo + '" class="trip-photo" alt="캠핑 기록 사진">';
+      html += '<div class="trip-summary-row">';
+      html += '<div class="meta-chip">' + escapeHtml(record.date || '') + '</div>';
+      html += '<div class="meta-chip">' + escapeHtml(record.place || '이름 없는 캠핑장') + '</div>';
+      html += '<div class="meta-chip weather-chip">' + escapeHtml(record.weather || '맑고 선선했어') + '</div>';
+      html += '</div>';
+      html += '<div class="trip-detail-hint">눌러서 그날의 기억을 더 자세히 봅니다.</div>';
+      html += '</article>';
+      return html;
+    }
+    function renderRecords() {
+      var records = getRecords();
+      if (records.length === 0) {
+        latestRecord.innerHTML = '';
+        searchResultText.textContent = '전체 기록 0건';
+        recordsList.innerHTML = '<div class="empty-state">아직 남겨둔 기억이 없습니다. 첫 캠핑의 분위기부터 천천히 담아보세요.</div>';
+        return;
+      }
+      var latest = records[0];
+      latestRecord.innerHTML = buildRecordCard(latest, shouldAnimateLatestCard);
+      shouldAnimateLatestCard = false;
+      var remainingRecords = records.slice(1);
+      var filteredRemainingRecords = getFilteredRecords(remainingRecords, currentSearchTerm);
+      searchResultText.textContent = currentSearchTerm.trim() ? '지난 기억들 검색 결과 ' + filteredRemainingRecords.length + '건' : '지난 기억들 ' + remainingRecords.length + '건';
+      if (remainingRecords.length === 0) {
+        recordsList.innerHTML = '<div class="empty-state">아직 지난 기억들은 없습니다. 다음 기록부터 이 아래에 차곡차곡 쌓입니다.</div>';
+        return;
+      }
+      if (currentSearchTerm.trim() && filteredRemainingRecords.length === 0) {
+        recordsList.innerHTML = '<div class="empty-state">이번에는 찾는 기억이 보이지 않습니다. 분위기나 장소를 다르게 떠올려보세요.</div>';
+        return;
+      }
+      recordsList.innerHTML = filteredRemainingRecords.map(function(record) { return buildRecordCard(record, false); }).join('');
+    }
+    function setDefaultChoice(groupId, value) {
+      var group = document.getElementById(groupId);
+      var buttons = group.querySelectorAll('.choice-button');
+      buttons.forEach(function(button) { button.classList.toggle('active', button.getAttribute('data-value') === value); });
+    }
+    function resetForm() {
+      editingRecordId = null;
+      currentPhotoData = '';
+      modalTitle.textContent = '이번 기억 남기기';
+      saveRecordButton.textContent = '이 기억 저장하기';
+      saveRecordButton.disabled = false;
+      moodInput.value = '';
+      dateInput.value = getTodayValue();
+      placeInput.value = '';
+      noteInput.value = '';
+      photoInput.value = '';
+      photoPreview.style.display = 'none';
+      photoPreview.removeAttribute('src');
+      photoStatus.textContent = '';
+      setDefaultChoice('stayGroup', '1박');
+      setDefaultChoice('styleGroup', '솔로');
+      setDefaultChoice('groundGroup', '파쇄석');
+      setDefaultChoice('weatherGroup', '맑고 선선했어');
+    }
+    function openCreateMode() { resetForm(); recordModal.classList.add('show'); }
+    function openEditMode(recordId) {
+      var record = findRecordById(recordId);
+      if (!record) return;
+      editingRecordId = record.id;
+      currentPhotoData = record.photo || '';
+      modalTitle.textContent = '기억 수정하기';
+      saveRecordButton.textContent = '수정한 내용 저장하기';
+      saveRecordButton.disabled = false;
+      moodInput.value = record.mood || '';
+      dateInput.value = formatDateInput(record.date);
+      placeInput.value = record.place || '';
+      noteInput.value = record.note || '';
+      photoInput.value = '';
+      setDefaultChoice('stayGroup', record.stay || '1박');
+      setDefaultChoice('styleGroup', record.style || '솔로');
+      setDefaultChoice('groundGroup', record.ground || '파쇄석');
+      setDefaultChoice('weatherGroup', record.weather || '맑고 선선했어');
+      if (record.photo) {
+        photoPreview.src = record.photo;
+        photoPreview.style.display = 'block';
+        photoStatus.textContent = '기존 사진이 유지됩니다. 새 사진을 고르면 교체됩니다.';
+      } else {
+        photoPreview.style.display = 'none';
+        photoPreview.removeAttribute('src');
+        photoStatus.textContent = '사진이 없습니다. 새 사진을 추가할 수 있습니다.';
+      }
+      recordModal.classList.add('show');
+    }
+    function buildDetailInfoRow(label, value) {
+      return '<div class="detail-info-row"><div class="detail-info-label">' + escapeHtml(label) + '</div><div class="detail-info-value">' + escapeHtml(value) + '</div></div>';
+    }
+    function openDetailView(recordId) {
+      var record = findRecordById(recordId);
+      if (!record) return;
+      currentDetailId = record.id;
+      detailMood.textContent = record.mood || '이름 없는 하루';
+      detailNote.textContent = record.note || '짧은 감상이 아직 없습니다.';
+      detailInfoBlock.innerHTML = ''
+        + buildDetailInfoRow('다녀온 날짜', record.date || '')
+        + buildDetailInfoRow('캠핑장', record.place || '기록되지 않음')
+        + buildDetailInfoRow('머문 시간', record.stay || '')
+        + buildDetailInfoRow('함께한 형태', record.style || '')
+        + buildDetailInfoRow('바닥 느낌', record.ground || '')
+        + buildDetailInfoRow('그날의 날씨', record.weather || '맑고 선선했어');
+      if (record.photo) {
+        detailPhoto.src = record.photo;
+        detailPhoto.classList.add('show');
+        detailEmptyPhoto.classList.remove('show');
+      } else {
+        detailPhoto.removeAttribute('src');
+        detailPhoto.classList.remove('show');
+        detailEmptyPhoto.classList.add('show');
+      }
+      detailModal.classList.add('show');
+    }
+    function closeDetailView() {
+      detailModal.classList.remove('show');
+      currentDetailId = null;
+    }
+    function bytesToMB(bytes) { return (bytes / (1024 * 1024)).toFixed(1); }
+    function createCanvas(width, height) {
+      var canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.round(width));
+      canvas.height = Math.max(1, Math.round(height));
+      return canvas;
+    }
+    function drawHighQuality(source, targetCanvas, width, height) {
+      var ctx = targetCanvas.getContext('2d');
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(source, 0, 0, Math.round(width), Math.round(height));
+    }
+    function compressImage(file, callback) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var img = new Image();
+        img.onload = function() {
+          var maxSize = 1400;
+          var startWidth = img.width;
+          var startHeight = img.height;
+          var targetWidth = startWidth;
+          var targetHeight = startHeight;
+          if (startWidth > startHeight && startWidth > maxSize) {
+            targetHeight = Math.round(startHeight * (maxSize / startWidth));
+            targetWidth = maxSize;
+          } else if (startHeight >= startWidth && startHeight > maxSize) {
+            targetWidth = Math.round(startWidth * (maxSize / startHeight));
+            targetHeight = maxSize;
+          }
+          var sourceCanvas = createCanvas(startWidth, startHeight);
+          drawHighQuality(img, sourceCanvas, startWidth, startHeight);
+          var currentCanvas = sourceCanvas;
+          var currentWidth = startWidth;
+          var currentHeight = startHeight;
+          while (currentWidth * 0.5 > targetWidth && currentHeight * 0.5 > targetHeight) {
+            var stepWidth = Math.round(currentWidth * 0.5);
+            var stepHeight = Math.round(currentHeight * 0.5);
+            var stepCanvas = createCanvas(stepWidth, stepHeight);
+            drawHighQuality(currentCanvas, stepCanvas, stepWidth, stepHeight);
+            currentCanvas = stepCanvas;
+            currentWidth = stepWidth;
+            currentHeight = stepHeight;
+          }
+          var finalCanvas = createCanvas(targetWidth, targetHeight);
+          drawHighQuality(currentCanvas, finalCanvas, targetWidth, targetHeight);
+          callback(finalCanvas.toDataURL('image/jpeg', 0.8), targetWidth, targetHeight);
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+    function buildFormRecord() {
+      var rawDate = dateInput.value || getTodayValue();
+      return {
+        id: editingRecordId || Date.now(),
+        mood: moodInput.value.trim() || '이름 없는 하루',
+        date: formatDateDisplay(rawDate),
+        place: placeInput.value.trim() || '이름 없는 캠핑장',
+        stay: getActiveValue('stayGroup'),
+        style: getActiveValue('styleGroup'),
+        ground: getActiveValue('groundGroup'),
+        weather: getActiveValue('weatherGroup') || '맑고 선선했어',
+        note: noteInput.value.trim() || '짧은 감상이 아직 없습니다.',
+        photo: currentPhotoData || ''
+      };
+    }
+    function submitRecord() {
+      var record = buildFormRecord();
+      var isEditing = !!editingRecordId;
+      if (isEditing) {
+        updateRecord(record);
+        showToast('기억을 가지런히 다듬어 두었습니다.');
+      } else {
+        var records = getRecords();
+        records.unshift(record);
+        saveRecords(records);
+        shouldAnimateLatestCard = true;
+        renderRecords();
+        showToast('새로운 기억을 조용히 놓아두었습니다.');
+      }
+      recordModal.classList.remove('show');
+      resetForm();
+    }
+    openModalButton.addEventListener('click', openCreateMode);
+    closeModalButton.addEventListener('click', function() {
+      recordModal.classList.remove('show');
+      resetForm();
+    });
+    recordModal.addEventListener('click', function(e) {
+      if (e.target === recordModal) {
+        recordModal.classList.remove('show');
+        resetForm();
+      }
+    });
+    closeDetailButton.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      closeDetailView();
+    });
+    detailSheet.addEventListener('click', function(e) { e.stopPropagation(); });
+    detailModal.addEventListener('click', function(e) {
+      if (e.target === detailModal) closeDetailView();
+    });
+    detailEditButton.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!currentDetailId) return;
+      var recordId = currentDetailId;
+      detailModal.classList.remove('show');
+      openEditMode(recordId);
+    });
+    detailDeleteButton.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!currentDetailId) return;
+      if (!window.confirm('이 기록을 삭제할까요?')) return;
+      deleteRecord(currentDetailId);
+    });
+    searchInput.addEventListener('input', function(e) {
+      currentSearchTerm = e.target.value || '';
+      renderRecords();
+    });
+    photoInput.addEventListener('change', function() {
+      var file = photoInput.files[0];
+      if (!file) {
+        if (currentPhotoData) {
+          photoPreview.src = currentPhotoData;
+          photoPreview.style.display = 'block';
+          photoStatus.textContent = '기존 사진이 유지됩니다.';
+        } else {
+          photoPreview.style.display = 'none';
+          photoPreview.removeAttribute('src');
+          photoStatus.textContent = '';
+        }
+        saveRecordButton.disabled = false;
+        saveRecordButton.textContent = editingRecordId ? '수정한 내용 저장하기' : '이 기억 저장하기';
+        return;
+      }
+      saveRecordButton.disabled = true;
+      saveRecordButton.textContent = '사진 처리 중...';
+      photoStatus.textContent = '사진을 더 자연스럽게 보이도록 조정하는 중입니다.';
+      compressImage(file, function(compressedDataUrl, width, height) {
+        currentPhotoData = compressedDataUrl;
+        photoPreview.src = compressedDataUrl;
+        photoPreview.style.display = 'block';
+        photoStatus.textContent = '원본 ' + bytesToMB(file.size) + 'MB → 앱용 썸네일로 축소 완료 (' + width + '×' + height + ')';
+        saveRecordButton.disabled = false;
+        saveRecordButton.textContent = editingRecordId ? '수정한 내용 저장하기' : '이 기억 저장하기';
+      });
+    });
+    saveRecordButton.addEventListener('click', submitRecord);
+    document.addEventListener('click', function(e) {
+      var card = e.target.closest('.trip-card');
+      if (!card) return;
+      if (e.target.closest('.edit-button') || e.target.closest('.delete-button')) return;
+      var recordId = card.getAttribute('data-id');
+      if (!recordId) return;
+      openDetailView(recordId);
+    });
+    activateChoiceGroup('stayGroup');
+    activateChoiceGroup('styleGroup');
+    activateChoiceGroup('groundGroup');
+    activateChoiceGroup('weatherGroup');
+    resetForm();
+    renderRecords();
+  </script>
+</body>
+</html>
