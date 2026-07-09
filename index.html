@@ -294,7 +294,15 @@
       if (!saved) return [];
       try { return JSON.parse(saved); } catch (e) { return []; }
     }
-    function saveRecords(records) { localStorage.setItem('foresiteRecords', JSON.stringify(records)); }
+    function saveRecords(records) {
+  try {
+    localStorage.setItem('foresiteRecords', JSON.stringify(records));
+    return true;
+  } catch (error) {
+    showToast('사진 용량이 커서 저장이 안 됐어요. 더 작은 사진으로 다시 시도해 주세요.');
+    return false;
+  }
+}
     function findRecordById(recordId) {
       var records = getRecords();
       return records.find(function(record) { return String(record.id) === String(recordId); });
