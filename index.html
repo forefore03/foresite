@@ -464,40 +464,53 @@
   }
 
   async function renderRecords() {
-    try {
-      var records = await getRecords();
+  try {
+    var records = await getRecords();
+  } catch (error) {
+    console.error('getRecords 오류:', error);
+    // DB가 아직 없거나 열기 실패했을 때도 기본 화면은 보여주기
+    latestRecord.innerHTML = '';
+    searchResultText.textContent = '전체 기록 0건';
+    recordsList.innerHTML =
+      '<div class="empty-state">아직 남겨둔 기억이 없습니다. 첫 캠핑의 분위기부터 천천히 담아보세요.</div>';
+    return;
+  }
 
-      if (records.length === 0) {
-        latestRecord.innerHTML = '';
-        searchResultText.textContent = '전체 기록 0건';
-        recordsList.innerHTML = '<div class="empty-state">아직 남겨둔 기억이 없습니다. 첫 캠핑의 분위기부터 천천히 담아보세요.</div>';
-        return;
-      }
+  if (!Array.isArray(records) || records.length === 0) {
+    latestRecord.innerHTML = '';
+    searchResultText.textContent = '전체 기록 0건';
+    recordsList.innerHTML =
+      '<div class="empty-state">아직 남겨둔 기억이 없습니다. 첫 캠핑의 분위기부터 천천히 담아보세요.</div>';
+    return;
+  }
 
-      var latest = records[0];
-      latestRecord.innerHTML = buildRecordCard(latest, shouldAnimateLatestCard);
-      shouldAnimateLatestCard = false;
+  var latest = records[0];
+  latestRecord.innerHTML = buildRecordCard(latest, shouldAnimateLatestCard);
+  shouldAnimateLatestCard = false;
 
-      var remainingRecords = records.slice(1);
-      var filteredRemainingRecords = getFilteredRecords(remainingRecords, currentSearchTerm);
+  var remainingRecords = records.slice(1);
+  var filteredRemainingRecords = getFilteredRecords(remainingRecords, currentSearchTerm);
 
-      searchResultText.textContent = currentSearchTerm.trim()
-        ? '지난 기억들 검색 결과 ' + filteredRemainingRecords.length + '건'
-        : '지난 기억들 ' + remainingRecords.length + '건';
+  searchResultText.textContent = currentSearchTerm.trim()
+    ? '지난 기억들 검색 결과 ' + filteredRemainingRecords.length + '건'
+    : '지난 기억들 ' + remainingRecords.length + '건';
 
-      if (remainingRecords.length === 0) {
-        recordsList.innerHTML = '<div class="empty-state">아직 지난 기억들은 없습니다. 다음 기록부터 이 아래에 차곡차곡 쌓입니다.</div>';
-        return;
-      }
+  if (remainingRecords.length === 0) {
+    recordsList.innerHTML =
+      '<div class="empty-state">아직 지난 기억들은 없습니다. 다음 기록부터 이 아래에 차곡차곡 쌓입니다.</div>';
+    return;
+  }
 
-      if (currentSearchTerm.trim() && filteredRemainingRecords.length === 0) {
-        recordsList.innerHTML = '<div class="empty-state">이번에는 찾는 기억이 보이지 않습니다. 분위기나 장소를 다르게 떠올려보세요.</div>';
-        return;
-      }
+  if (currentSearchTerm.trim() && filteredRemainingRecords.length === 0) {
+    recordsList.innerHTML =
+      '<div class="empty-state">이번에는 찾는 기억이 보이지 않습니다. 분위기나 장소를 다르게 떠올려보세요.</div>';
+    return;
+  }
 
-      recordsList.innerHTML = filteredRemainingRecords.map(function (record) {
-        return buildRecordCard(record, false);
-      }).join('');
+  recordsList.innerHTML = filteredRemainingRecords
+    .map(function (record) { return buildRecordCard(record, false); })
+    .join('');
+}
     } catch (error) {
       console.error(error);
     }
