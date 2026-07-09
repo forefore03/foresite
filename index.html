@@ -282,6 +282,7 @@
   var editingRecordId = null;
   var currentDetailId = null;
   var currentPhotoData = '';
+  var currentPhotoBlob = null;
   var currentSearchTerm = '';
   var toastMessage = document.getElementById('toastMessage');
   var toastTimer = null;
@@ -857,14 +858,15 @@
     saveRecordButton.textContent = '사진 처리 중...';
     photoStatus.textContent = '사진을 더 자연스럽게 보이도록 조정하는 중입니다.';
 
-    compressImage(file, function (compressedDataUrl, width, height) {
-      currentPhotoData = compressedDataUrl;
-      photoPreview.src = compressedDataUrl;
-      photoPreview.style.display = 'block';
-      photoStatus.textContent = '원본 ' + bytesToMB(file.size) + 'MB → 앱용 썸네일로 축소 완료 (' + width + '×' + height + ')';
-      saveRecordButton.disabled = false;
-      saveRecordButton.textContent = editingRecordId ? '수정한 내용 저장하기' : '이 기억 저장하기';
-    });
+  compressImageToBlob(file, function (blob, width, height) {
+    currentPhotoBlob = blob;
+    currentPhotoData = URL.createObjectURL(blob);
+    photoPreview.src = currentPhotoData;
+    photoPreview.style.display = 'block';
+    photoStatus.textContent = '원본 ' + bytesToMB(file.size) + 'MB → 앱용 썸네일로 축소 완료 (' + width + '×' + height + ')';
+    saveRecordButton.disabled = false;
+    saveRecordButton.textContent = editingRecordId ? '수정한 내용 저장하기' : '이 기억 저장하기';
+  });
   });
 
   saveRecordButton.addEventListener('click', function () {
