@@ -515,7 +515,30 @@ async function exportBackup() {
     if (!record || typeof record !== 'object') continue;
     if (!record.id) continue;
 
-    await saveRecord(record);
+    var normalizedRecord = {
+      id: record.id,
+      createdAt: record.createdAt || Date.now(),
+      updatedAt: record.updatedAt || Date.now(),
+      mood: record.mood || '이름 없는 하루',
+      date: record.date || '',
+      place: record.place || '이름 없는 캠핑장',
+      stay: record.stay || '1박',
+      style: record.style || '솔로',
+      ground: record.ground || '파쇄석',
+      weather: record.weather || '맑고 선선했어',
+      note: record.note || '짧은 감상이 아직 없습니다.',
+      photo: ''
+    };
+
+    if (typeof record.photo === 'string') {
+      if (record.photo.indexOf('data:image/') === 0) {
+        normalizedRecord.photo = record.photo;
+      } else if (record.photo.indexOf('blob:') === 0) {
+        normalizedRecord.photo = '';
+      }
+    }
+
+    await saveRecord(normalizedRecord);
     importedCount += 1;
   }
 
@@ -866,25 +889,23 @@ async function handleRestoreFile(file) {
     };
   }
 
-  function compressImageToBlob(file, callback) {
-    var reader = new FileReader();
+  function compressImageToDataUrl(file, callback) {
+  var reader = new FileReader();
 
-    reader.onload = function (e) {
-      var img = new Image();
+  reader.onload = function (e) {
+    var img = new Image();
 
-      img.onload = function () {
-        var result = downscaleImage(img, 960);
-
-        result.canvas.toBlob(function (blob) {
-          callback(blob, result.width, result.height);
-        }, 'image/jpeg', 0.65);
-      };
-
-      img.src = e.target.result;
+    img.onload = function () {
+      var result = downscaleImage(img, 960);
+      var dataUrl = result.canvas.toDataURL('image/jpeg', 0.65);
+      callback(dataUrl, result.width, result.height);
     };
 
-    reader.readAsDataURL(file);
-  }
+    img.src = e.target.result;
+  };
+
+  reader.readAsDataURL(file);
+}
 
   function buildFormRecord() {
     var rawDate = els.dateInput.value || getTodayValue();
@@ -1004,14 +1025,14 @@ async function handleRestoreFile(file) {
     els.saveRecordButton.textContent = '사진 처리 중...';
     els.photoStatus.textContent = '사진을 더 자연스럽게 보이도록 조정하는 중입니다.';
 
-    compressImageToBlob(file, function (blob, width, height) {
-      state.currentPhotoBlob = blob;
-      state.currentPhotoData = URL.createObjectURL(blob);
-      showPhotoPreview(state.currentPhotoData);
-      els.photoStatus.textContent = '원본 ' + bytesToMB(file.size) + 'MB → 앱용 썸네일로 축소 완료 (' + width + '×' + height + ')';
-      els.saveRecordButton.disabled = false;
-      els.saveRecordButton.textContent = state.editingRecordId ? '수정한 내용 저장하기' : '이 기억 저장하기';
-    });
+    compressImageToDataUrl(file, function (dataUrl, width, height) {
+  state.currentPhotoBlob = null;
+  state.currentPhotoData = dataUrl;
+  showPhotoPreview(state.currentPhotoData);
+  els.photoStatus.textContent = '원본 ' + bytesToMB(file.size) + 'MB → 앱용 썸네일로 축소 완료 (' + width + '×' + height + ')';
+  els.saveRecordButton.disabled = false;
+  els.saveRecordButton.textContent = state.editingRecordId ? '수정한 내용 저장하기' : '이 기억 저장하기';
+});
   });
 
   els.saveRecordButton.addEventListener('click', function () {
