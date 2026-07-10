@@ -53,22 +53,25 @@
   font-weight: 700;
   padding: 14px 16px;
   border: 1px solid rgba(217, 212, 202, 0.9);
+  white-space: nowrap;
+  letter-spacing: -0.2px;
 }
 
 .backup-button {
   flex: 8;
-  background: #e7eee9;
-  color: var(--accent);
+  background: #eee8f6;
+  color: #6d5a8c;
+  border-color: rgba(174, 160, 201, 0.55);
 }
 
 .restore-button {
-  flex: 2;
-  background: #ece8df;
-  color: #6d665b;
-  font-size: 13px;
-  letter-spacing: -0.2px;
-  padding-left: 10px;
-  padding-right: 10px;
+  flex: 2.6;
+  background: #e6eef7;
+  color: #4f6b8a;
+  border-color: rgba(145, 171, 201, 0.55);
+  font-size: 15px;
+  padding-left: 12px;
+  padding-right: 12px;
 }
     .primary-button { width: 100%; border-radius: 16px; background: var(--accent); color: var(--white); font-size: 17px; font-weight: 700; padding: 16px; }
     .primary-button:disabled { opacity: 0.55; cursor: not-allowed; }
@@ -148,7 +151,7 @@
       <div id="latestRecord"></div>
       <div class="backup-row">
         <button type="button" class="secondary-button backup-button" id="exportBackupButton">기억 챙겨두기</button>
-        <button type="button" class="secondary-button restore-button" id="restoreBackupButton">다시 꺼내기</button>
+        <button type="button" class="secondary-button restore-button" id="restoreBackupButton">꺼내보기</button>
         <input type="file" id="restoreFileInput" accept=".json,application/json" style="display:none;">
       </div>
       <section class="search-card">
