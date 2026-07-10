@@ -41,18 +41,35 @@
     .hero-title { font-size: 28px; line-height: 1.2; font-weight: 700; margin: 0 0 10px; }
     .hero-text { font-size: 16px; line-height: 1.5; color: var(--muted); margin: 0 0 18px; }
     .primary-button,.secondary-button,.choice-button,.close-button,.delete-button,.edit-button,.detail-back-button { border: none; cursor: pointer; font-family: inherit; }
-    .backup-row { margin: 14px 0 18px; }
+    .backup-row {
+  display: flex;
+  gap: 8px;
+  margin: 14px 0 18px;
+}
 
-    .secondary-button {
-      width: 100%;
-      border-radius: 16px;
-      background: #ece8df;
-      color: var(--text);
-      font-size: 15px;
-      font-weight: 700;
-      padding: 14px 16px;
-      border: 1px solid rgba(217, 212, 202, 0.9);
-    }
+.secondary-button {
+  border-radius: 16px;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 14px 16px;
+  border: 1px solid rgba(217, 212, 202, 0.9);
+}
+
+.backup-button {
+  flex: 8;
+  background: #e7eee9;
+  color: var(--accent);
+}
+
+.restore-button {
+  flex: 2;
+  background: #ece8df;
+  color: #6d665b;
+  font-size: 13px;
+  letter-spacing: -0.2px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
     .primary-button { width: 100%; border-radius: 16px; background: var(--accent); color: var(--white); font-size: 17px; font-weight: 700; padding: 16px; }
     .primary-button:disabled { opacity: 0.55; cursor: not-allowed; }
     .section { margin-top: 26px; }
@@ -130,7 +147,9 @@
     <section class="section">
       <div id="latestRecord"></div>
       <div class="backup-row">
-        <button type="button" class="secondary-button" id="exportBackupButton">백업 내보내기</button>
+        <button type="button" class="secondary-button backup-button" id="exportBackupButton">기억 챙겨두기</button>
+        <button type="button" class="secondary-button restore-button" id="restoreBackupButton">다시 꺼내기</button>
+        <input type="file" id="restoreFileInput" accept=".json,application/json" style="display:none;">
       </div>
       <section class="search-card">
         <div class="search-label">지난 기억 찾기</div>
@@ -246,6 +265,8 @@
     recordsList: document.getElementById('recordsList'),
     latestRecord: document.getElementById('latestRecord'),
     exportBackupButton: document.getElementById('exportBackupButton'),
+    restoreBackupButton: document.getElementById('restoreBackupButton'),
+    restoreFileInput: document.getElementById('restoreFileInput'),
     modalTitle: document.getElementById('modalTitle'),
     searchInput: document.getElementById('searchInput'),
     searchResultText: document.getElementById('searchResultText'),
@@ -469,6 +490,85 @@ async function exportBackup() {
       records: records
     };
 
+    async function importBackupFromText(jsonText) {
+  var parsed;
+
+  try {
+    parsed = JSON.parse(jsonText);
+  } catch (error) {
+    throw new Error('JSON_PARSE_FAILED');
+  }
+
+  if (!parsed || !Array.isArray(parsed.records)) {
+    throw new Error('INVALID_BACKUP_FORMAT');
+  }
+
+  var records = parsed.records;
+  var importedCount = 0;
+
+  for (var i = 0; i < records.length; i += 1) {
+    var record = records[i];
+
+    if (!record || typeof record !== 'object') continue;
+    if (!record.id) continue;
+
+    await saveRecord(record);
+    importedCount += 1;
+  }
+
+  return importedCount;
+}
+
+function readFileAsText(file) {
+  return new Promise(function (resolve, reject) {
+    var reader = new FileReader();
+
+    reader.onload = function () {
+      resolve(reader.result);
+    };
+
+    reader.onerror = function () {
+      reject(new Error('FILE_READ_FAILED'));
+    };
+
+    reader.readAsText(file);
+  });
+}
+
+async function handleRestoreFile(file) {
+  if (!file) return;
+
+  try {
+    var jsonText = await readFileAsText(file);
+    var importedCount = await importBackupFromText(jsonText);
+
+    await renderRecords();
+
+    if (importedCount === 0) {
+      showToast('꺼낼 수 있는 기억이 없었어요.');
+      return;
+    }
+
+    showToast(importedCount + '개의 기억을 다시 꺼내두었어요.');
+  } catch (error) {
+    console.error(error);
+
+    if (error.message === 'JSON_PARSE_FAILED') {
+      showToast('백업 파일 형식이 올바르지 않아요.');
+      return;
+    }
+
+    if (error.message === 'INVALID_BACKUP_FORMAT') {
+      showToast('foresite 백업 파일이 아닌 것 같아요.');
+      return;
+    }
+
+    showToast('기억을 다시 꺼내는 중 문제가 생겼어요.');
+  } finally {
+    els.restoreFileInput.value = '';
+  }
+}
+    
     downloadTextFile(
       'foresite-backup-' + today + '.json',
       JSON.stringify(backupData, null, 2)
@@ -917,6 +1017,23 @@ async function exportBackup() {
 
     els.exportBackupButton.addEventListener('click', function () {
   exportBackup();
+});
+
+    els.restoreBackupButton.addEventListener('click', function () {
+  els.restoreFileInput.click();
+});
+
+els.restoreFileInput.addEventListener('change', function (e) {
+  var file = e.target.files && e.target.files[0];
+  if (!file) return;
+
+  var ok = window.confirm('이 백업 파일의 기억들을 지금 앱에 다시 꺼내올까요?');
+  if (!ok) {
+    els.restoreFileInput.value = '';
+    return;
+  }
+
+  handleRestoreFile(file);
 });
     
   document.addEventListener('click', function (e) {
