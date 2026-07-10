@@ -267,12 +267,6 @@
     font-weight: 700;
   }
 
-  .trip-detail-hint {
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 10px;
-  }
-
   .modal,
   .detail-modal {
     position: fixed;
@@ -1010,7 +1004,6 @@
     html += '<div class="meta-chip">' + escapeHtml(record.stay || '') + '</div>';
     html += '</div>';
 
-    html += '<div class="trip-detail-hint">눌러서 그날의 기억을 더 자세히 봅니다.</div>';
     html += '</article>';
     return html;
   }
