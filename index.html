@@ -492,7 +492,115 @@ async function exportBackup() {
       recordCount: records.length,
       records: records
     };
+function readFileAsText(file) {
+  return new Promise(function (resolve, reject) {
+    var reader = new FileReader();
 
+    reader.onload = function () {
+      resolve(reader.result);
+    };
+
+    reader.onerror = function () {
+      reject(new Error('FILE_READ_FAILED'));
+    };
+
+    reader.readAsText(file);
+  });
+}
+
+async function importBackupFromText(jsonText) {
+  var parsed;
+
+  try {
+    parsed = JSON.parse(jsonText);
+  } catch (error) {
+    throw new Error('JSON_PARSE_FAILED');
+  }
+
+  if (!parsed || !Array.isArray(parsed.records)) {
+    throw new Error('INVALID_BACKUP_FORMAT');
+  }
+
+  var records = parsed.records;
+  console.log('backup records length', records.length);
+
+  var importedCount = 0;
+
+  for (var i = 0; i < records.length; i += 1) {
+    var record = records[i];
+
+    if (!record || typeof record !== 'object') continue;
+    if (!record.id) continue;
+
+    var normalizedRecord = {
+      id: record.id,
+      createdAt: record.createdAt || Date.now(),
+      updatedAt: record.updatedAt || Date.now(),
+      mood: record.mood || '이름 없는 하루',
+      date: record.date || '',
+      place: record.place || '이름 없는 캠핑장',
+      stay: record.stay || '1박',
+      style: record.style || '솔로',
+      ground: record.ground || '파쇄석',
+      weather: record.weather || '맑고 선선했어',
+      note: record.note || '짧은 감상이 아직 없습니다.',
+      photo: ''
+    };
+
+    if (typeof record.photo === 'string') {
+      if (record.photo.indexOf('data:image/') === 0) {
+        normalizedRecord.photo = record.photo;
+      } else if (record.photo.indexOf('blob:') === 0) {
+        normalizedRecord.photo = '';
+      }
+    }
+
+    await saveRecord(normalizedRecord);
+    console.log('saved record', normalizedRecord.id, normalizedRecord.mood);
+    importedCount += 1;
+  }
+
+  return importedCount;
+}
+
+async function handleRestoreFile(file) {
+  console.log('restore start', file && file.name, file && file.size);
+  if (!file) return;
+
+  try {
+    var jsonText = await readFileAsText(file);
+    console.log('json loaded length', jsonText.length);
+
+    var importedCount = await importBackupFromText(jsonText);
+    console.log('importedCount', importedCount);
+
+    await renderRecords();
+    console.log('render finished');
+
+    if (importedCount === 0) {
+      showToast('꺼낼 수 있는 기억이 없었어요.');
+      return;
+    }
+
+    showToast(importedCount + '개의 기억을 다시 꺼내두었어요.');
+  } catch (error) {
+    console.error(error);
+
+    if (error.message === 'JSON_PARSE_FAILED') {
+      showToast('백업 파일 형식이 올바르지 않아요.');
+      return;
+    }
+
+    if (error.message === 'INVALID_BACKUP_FORMAT') {
+      showToast('foresite 백업 파일이 아닌 것 같아요.');
+      return;
+    }
+
+    showToast('기억을 다시 꺼내는 중 문제가 생겼어요.');
+  } finally {
+    els.restoreFileInput.value = '';
+  }
+}
     async function importBackupFromText(jsonText) {
   var parsed;
 
