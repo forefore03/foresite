@@ -507,6 +507,7 @@ async function exportBackup() {
   }
 
   var records = parsed.records;
+      console.log('backup records length', records.length);
   var importedCount = 0;
 
   for (var i = 0; i < records.length; i += 1) {
@@ -539,6 +540,7 @@ async function exportBackup() {
     }
 
     await saveRecord(normalizedRecord);
+    console.log('saved record', normalizedRecord.id, normalizedRecord.mood);
     importedCount += 1;
   }
 
@@ -562,13 +564,17 @@ function readFileAsText(file) {
 }
 
 async function handleRestoreFile(file) {
+  console.log('restore start', file && file.name, file && file.size);
   if (!file) return;
 
   try {
     var jsonText = await readFileAsText(file);
+    console.log('json loaded length', jsonText.length);
     var importedCount = await importBackupFromText(jsonText);
+    console.log('importedCount', importedCount);
 
     await renderRecords();
+    console.log('render finished');
 
     if (importedCount === 0) {
       showToast('꺼낼 수 있는 기억이 없었어요.');
