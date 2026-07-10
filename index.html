@@ -11,7 +11,9 @@
       --bg: #f7f7f5;
       --card: #f5f3ee;
       --card-2: #ece7de;
+      --card-3: #f3efe8;
       --text: #1f1d19;
+      --text-soft: #4e4a42;
       --muted: #7a766d;
       --line: #d9d4ca;
       --accent: #466f5e;
@@ -29,24 +31,70 @@
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI", sans-serif;
       background: var(--bg);
-    color: var(--text);
+      color: var(--text);
     }
     .app { max-width: 430px; min-height: 100vh; margin: 0 auto; padding: 20px 16px 32px; }
     .topbar { padding-top: 10px; margin-bottom: 24px; }
     .brand { font-size: 40px; font-weight: 800; letter-spacing: -1px; margin: 0 0 6px; }
     .subtitle { font-size: 18px; color: var(--muted); margin: 0; }
-    .hero-card,.trip-card,.modal-sheet,.search-card,.detail-sheet { background: var(--card); border: 1px solid rgba(217, 212, 202, 0.8); box-shadow: var(--shadow); }
+    .hero-card,.trip-card,.modal-sheet,.search-card,.detail-sheet,.backup-card { background: var(--card); border: 1px solid rgba(217, 212, 202, 0.8); box-shadow: var(--shadow); }
     .hero-card { border-radius: 24px; padding: 20px; margin-bottom: 18px; }
     .hero-label { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
     .hero-title { font-size: 28px; line-height: 1.2; font-weight: 700; margin: 0 0 10px; }
     .hero-text { font-size: 16px; line-height: 1.5; color: var(--muted); margin: 0 0 18px; }
-    .primary-button,.choice-button,.close-button,.delete-button,.edit-button,.detail-back-button { border: none; cursor: pointer; font-family: inherit; }
-    .primary-button { width: 100%; border-radius: 16px; background: var(--accent); color: var(--white); font-size: 17px; font-weight: 700; padding: 16px; }
+
+    .primary-button,.choice-button,.close-button,.delete-button,.edit-button,.detail-back-button,.secondary-button {
+      border: none; cursor: pointer; font-family: inherit;
+    }
+    .primary-button {
+      width: 100%; border-radius: 16px; background: var(--accent); color: var(--white);
+      font-size: 17px; font-weight: 700; padding: 16px;
+    }
     .primary-button:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    .secondary-button {
+      width: 100%;
+      border-radius: 14px;
+      background: var(--card-2);
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 700;
+      padding: 14px 16px;
+      border: 1px solid rgba(217, 212, 202, 0.9);
+    }
+
+    .backup-card {
+      border-radius: 18px;
+      padding: 14px;
+      margin-top: 14px;
+      margin-bottom: 18px;
+      background: #f7f4ee;
+    }
+    .backup-label {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .backup-helper {
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .backup-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
     .section { margin-top: 26px; }
     .search-card { border-radius: 18px; padding: 14px; margin-top: 18px; margin-bottom: 18px; }
     .search-label { font-size: 15px; font-weight: 700; margin-bottom: 10px; }
-    .search-input { width: 100%; height: 34px; border: 1px solid var(--line); border-radius: 999px; background: #f7f4ee; color: var(--text); font-size: 16px; padding: 0 14px; font-family: inherit; outline: none; -webkit-appearance: none; appearance: none; }
+    .search-input {
+      width: 100%; height: 34px; border: 1px solid var(--line); border-radius: 999px;
+      background: #f7f4ee; color: var(--text); font-size: 16px; padding: 0 14px;
+      font-family: inherit; outline: none; -webkit-appearance: none; appearance: none;
+    }
     .search-helper,.search-result-text { font-size: 13px; line-height: 1.4; margin-top: 8px; }
     .search-helper { color: var(--muted); }
     .search-result-text { color: var(--accent); }
@@ -60,47 +108,103 @@
     .meta-chip { background: var(--card-2); color: var(--muted); font-size: 13px; padding: 7px 10px; border-radius: 999px; }
     .meta-chip.weather-chip { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
     .trip-detail-hint { font-size: 12px; color: var(--muted); margin-top: 10px; }
-    .modal,.detail-modal { position: fixed; inset: 0; background: rgba(25, 24, 20, 0.38); display: none; align-items: flex-end; justify-content: center; z-index: 1000; }
+
+    .modal,.detail-modal {
+      position: fixed; inset: 0; background: rgba(25, 24, 20, 0.38); display: none;
+      align-items: flex-end; justify-content: center; z-index: 1000;
+    }
     .modal.show,.detail-modal.show { display: flex; }
-    .modal-sheet,.detail-sheet { width: min(430px, 100%); border-radius: 28px 28px 0 0; padding: 18px 16px 28px; max-height: 88vh; overflow-y: auto; background: #fbfaf7; }
+    .modal-sheet,.detail-sheet {
+      width: min(430px, 100%); border-radius: 28px 28px 0 0; padding: 18px 16px 28px;
+      max-height: 88vh; overflow-y: auto; background: #fbfaf7;
+    }
     .detail-sheet { box-shadow: var(--shadow-strong); padding-bottom: 34px; }
     .handle { width: 44px; height: 5px; background: #d7d1c7; border-radius: 999px; margin: 0 auto 18px; }
     .modal-top,.detail-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; gap: 12px; }
     .modal-title { font-size: 24px; font-weight: 800; margin: 0; }
-    .detail-back-button,.close-button { background: #ece8df; color: var(--text); border-radius: 999px; padding: 10px 14px; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+    .detail-back-button,.close-button {
+      background: #ece8df; color: var(--text); border-radius: 999px; padding: 10px 14px;
+      font-size: 14px; font-weight: 700; flex-shrink: 0;
+    }
     .detail-label { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
     .detail-mood { font-size: 30px; line-height: 1.18; font-weight: 800; margin: 0 0 10px; letter-spacing: -0.4px; }
     .detail-note { font-size: 16px; line-height: 1.65; color: var(--text-soft); margin: 0 0 18px; }
-    .detail-photo { width: 100%; max-height: 320px; object-fit: cover; border-radius: 22px; margin-bottom: 20px; border: 1px solid rgba(217, 212, 202, 0.8); display: none; }
+    .detail-photo {
+      width: 100%; max-height: 320px; object-fit: cover; border-radius: 22px; margin-bottom: 20px;
+      border: 1px solid rgba(217, 212, 202, 0.8); display: none;
+    }
     .detail-photo.show { display: block; }
-    .detail-empty-photo { display: none; border: 1px dashed var(--line); border-radius: 20px; padding: 24px 18px; color: var(--muted); font-size: 14px; line-height: 1.5; background: rgba(252, 251, 248, 0.7); margin-bottom: 20px; }
+    .detail-empty-photo {
+      display: none; border: 1px dashed var(--line); border-radius: 20px; padding: 24px 18px;
+      color: var(--muted); font-size: 14px; line-height: 1.5; background: rgba(252, 251, 248, 0.7);
+      margin-bottom: 20px;
+    }
     .detail-empty-photo.show { display: block; }
-    .detail-info-block { background: var(--card-3); border: 1px solid rgba(217, 212, 202, 0.72); border-radius: 20px; padding: 14px; margin-bottom: 18px; }
-    .detail-info-row { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(217, 212, 202, 0.7); }
+    .detail-info-block {
+      background: var(--card-3); border: 1px solid rgba(217, 212, 202, 0.72);
+      border-radius: 20px; padding: 14px; margin-bottom: 18px;
+    }
+    .detail-info-row {
+      display: flex; justify-content: space-between; gap: 12px; padding: 10px 0;
+      border-bottom: 1px solid rgba(217, 212, 202, 0.7);
+    }
     .detail-info-row:last-child { border-bottom: none; padding-bottom: 0; }
     .detail-info-row:first-child { padding-top: 0; }
     .detail-info-label { font-size: 13px; color: var(--muted); flex-shrink: 0; }
     .detail-info-value { font-size: 14px; color: var(--text); text-align: right; line-height: 1.45; }
     .detail-action-row { display: flex; gap: 8px; justify-content: flex-start; }
-    .edit-button,.delete-button { height: 30px; padding: 0 12px; border-radius: 999px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; line-height: 1; white-space: nowrap; }
+    .edit-button,.delete-button {
+      height: 30px; padding: 0 12px; border-radius: 999px; font-size: 12px; font-weight: 700;
+      display: inline-flex; align-items: center; justify-content: center; line-height: 1; white-space: nowrap;
+    }
     .edit-button { background: var(--edit-soft); color: var(--edit); }
     .delete-button { background: var(--danger-soft); color: var(--danger); }
+
     .field { margin-bottom: 20px; }
     .field-label { font-size: 15px; font-weight: 700; margin-bottom: 10px; display: block; }
     .choice-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-    .choice-button { background: #efebe4; color: #4b473f; border-radius: 999px; padding: 12px 14px; font-size: 14px; font-weight: 700; }
+    .choice-button {
+      background: #efebe4; color: #4b473f; border-radius: 999px; padding: 12px 14px;
+      font-size: 14px; font-weight: 700;
+    }
     .choice-button.active { background: var(--accent); color: var(--white); }
-    .text-input,.text-area,.file-input,.date-input { width: 100%; border: 1px solid var(--line); border-radius: 16px; background: #f7f4ee; color: var(--text); font-size: 16px; padding: 14px 16px; font-family: inherit; outline: none; }
-    .date-input {  height: 56px;  padding: 0 16px;  font-size: 15px;  text-align: left;  appearance: none;  -webkit-appearance: none;}
+
+    .text-input,.text-area,.file-input,.date-input {
+      width: 100%; border: 1px solid var(--line); border-radius: 16px; background: #f7f4ee;
+      color: var(--text); font-size: 16px; padding: 14px 16px; font-family: inherit; outline: none;
+    }
+    .date-input {
+      height: 56px; padding: 0 16px; font-size: 15px; text-align: left;
+      appearance: none; -webkit-appearance: none;
+    }
     .text-area { resize: vertical; min-height: 96px; line-height: 1.5; }
     .helper-text,.status-text { font-size: 13px; margin-top: 8px; line-height: 1.4; }
     .helper-text { color: var(--muted); }
     .status-text { color: var(--accent); }
-    .photo-preview { width: 100%; max-height: 220px; border-radius: 18px; margin-top: 12px; border: 1px solid rgba(217, 212, 202, 0.8); object-fit: cover; }
+    .photo-preview {
+      width: 100%; max-height: 220px; border-radius: 18px; margin-top: 12px;
+      border: 1px solid rgba(217, 212, 202, 0.8); object-fit: cover;
+    }
     .save-placeholder { font-size: 14px; color: var(--muted); text-align: center; margin-top: 16px; }
-    .empty-state { background: rgba(252, 251, 248, 0.7); border: 1px dashed var(--line); border-radius: 18px; padding: 20px; color: var(--muted); font-size: 15px; line-height: 1.5; }
-    .toast { position: fixed; top: 18px; left: 50%; transform: translateX(-50%) translateY(-8px); width: calc(100% - 32px); max-width: 398px; background: rgba(48, 74, 63, 0.94); color: #f6f4ef; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 12px 14px; font-size: 14px; line-height: 1.4; box-shadow: 0 10px 30px rgba(31, 29, 25, 0.16); backdrop-filter: blur(12px); opacity: 0; pointer-events: none; transition: opacity 220ms ease, transform 220ms ease; z-index: 1200; }
+    .empty-state {
+      background: rgba(252, 251, 248, 0.7); border: 1px dashed var(--line); border-radius: 18px;
+      padding: 20px; color: var(--muted); font-size: 15px; line-height: 1.5;
+    }
+    .toast {
+      position: fixed; top: 18px; left: 50%; transform: translateX(-50%) translateY(-8px);
+      width: calc(100% - 32px); max-width: 398px; background: rgba(48, 74, 63, 0.94);
+      color: #f6f4ef; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px;
+      padding: 12px 14px; font-size: 14px; line-height: 1.4; box-shadow: 0 10px 30px rgba(31, 29, 25, 0.16);
+      backdrop-filter: blur(12px); opacity: 0; pointer-events: none;
+      transition: opacity 220ms ease, transform 220ms ease; z-index: 1200;
+    }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .hidden-input { display: none; }
+
+    @media (max-width: 360px) {
+      .backup-actions { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -109,24 +213,39 @@
       <h1 class="brand">foresite</h1>
       <p class="subtitle">솔로 오토캠핑 기록 앱</p>
     </div>
+
     <section class="hero-card">
       <div class="hero-label">좋았던 날은 오래 남기고 싶어서</div>
       <h2 class="hero-title">그날의 바람과 분위기를<br>천천히 다시 꺼내봅니다.</h2>
       <p class="hero-text">짧게 남긴 감상과 일정한 기록이, 그날의 공기까지 다시 떠올리게 해줍니다.</p>
       <button type="button" class="primary-button" id="openModalButton">이번 기억 남기기</button>
     </section>
+
+    <section class="backup-card">
+      <div class="backup-label">기억 챙겨두기</div>
+      <div class="backup-helper">지금까지 남긴 기록을 JSON 파일로 내려받아 보관할 수 있고, 나중에 다시 꺼내와 복원할 수 있습니다.</div>
+      <div class="backup-actions">
+        <button type="button" class="secondary-button" id="exportBackupButton">기억 챙겨두기</button>
+        <button type="button" class="secondary-button" id="importBackupButton">꺼내보기</button>
+      </div>
+      <input type="file" id="importBackupInput" class="hidden-input" accept="application/json,.json">
+    </section>
+
     <section class="section">
       <div id="latestRecord"></div>
+
       <section class="search-card">
         <div class="search-label">지난 기억 찾기</div>
         <input type="search" id="searchInput" class="search-input" placeholder="분위기나 장소로 찾아보세요">
         <div class="search-helper">떠올리고 싶은 기억을 가볍게 꺼내보세요.</div>
         <div class="search-result-text" id="searchResultText"></div>
       </section>
+
       <h3 class="memory-title">지난 기억들</h3>
       <div id="recordsList"></div>
     </section>
   </div>
+
   <div class="toast" id="toastMessage" aria-live="polite" aria-atomic="true"></div>
 
   <div class="modal" id="recordModal">
@@ -136,20 +255,24 @@
         <h2 class="modal-title" id="modalTitle">이번 기억 남기기</h2>
         <button type="button" class="close-button" id="closeModalButton">닫기</button>
       </div>
+
       <div class="field">
         <label class="field-label" for="moodInput">그날의 분위기</label>
         <input type="text" id="moodInput" class="text-input" placeholder="예: 고요함, 눅눅함, 해방감, 선선함">
         <div class="helper-text">그날을 한 단어처럼 남겨보세요. 상세 화면의 제목이 됩니다.</div>
       </div>
+
       <div class="field">
         <label class="field-label" for="dateInput">다녀온 날짜</label>
         <input type="date" id="dateInput" class="date-input">
         <div class="helper-text">오늘 날짜가 기본으로 들어가며, 지난 날짜로 바꿔 저장할 수 있습니다.</div>
       </div>
+
       <div class="field">
         <label class="field-label" for="placeInput">캠핑장</label>
         <input type="text" id="placeInput" class="text-input" placeholder="예: 난지캠핑장">
       </div>
+
       <div class="field">
         <div class="field-label">얼마나 머물렀나요</div>
         <div class="choice-grid" id="stayGroup">
@@ -158,14 +281,16 @@
           <button type="button" class="choice-button" data-value="2박+">2박+</button>
         </div>
       </div>
+
       <div class="field">
         <div class="field-label">누구와 함께였나요</div>
         <div class="choice-grid" id="styleGroup">
           <button type="button" class="choice-button active" data-value="솔로">솔로</button>
           <button type="button" class="choice-button" data-value="2인">2인</button>
-           <button type="button" class="choice-button" data-value="가족">가족</button>
+          <button type="button" class="choice-button" data-value="가족">가족</button>
         </div>
       </div>
+
       <div class="field">
         <div class="field-label">바닥 느낌은 어땠나요</div>
         <div class="choice-grid" id="groundGroup">
@@ -175,6 +300,7 @@
           <button type="button" class="choice-button" data-value="흙">흙</button>
         </div>
       </div>
+
       <div class="field">
         <div class="field-label">그날의 날씨</div>
         <div class="choice-grid" id="weatherGroup">
@@ -187,10 +313,12 @@
           <button type="button" class="choice-button" data-value="아주 추웠어">아주 추웠어</button>
         </div>
       </div>
+
       <div class="field">
         <label class="field-label" for="noteInput">짧은 감상</label>
         <textarea id="noteInput" class="text-area" rows="3" placeholder="예: 텐트를 치고 나니 공기가 느리게 가라앉는 느낌이었다."></textarea>
       </div>
+
       <div class="field">
         <label class="field-label" for="photoInput">사진 첨부</label>
         <input type="file" id="photoInput" accept="image/*" class="file-input">
@@ -198,10 +326,12 @@
         <div class="status-text" id="photoStatus"></div>
         <img id="photoPreview" class="photo-preview" alt="선택한 사진 미리보기" style="display:none;">
       </div>
+
       <button type="button" class="primary-button" id="saveRecordButton">이 기억 저장하기</button>
       <div class="save-placeholder">저장하면 가장 위에 조용히 놓아둘게요.</div>
     </div>
   </div>
+
   <div class="detail-modal" id="detailModal">
     <div class="detail-sheet" id="detailSheet">
       <div class="handle"></div>
@@ -220,6 +350,7 @@
       </div>
     </div>
   </div>
+
   <script>
   var dbPromise = null;
 
@@ -279,6 +410,10 @@
   var detailInfoBlock = document.getElementById('detailInfoBlock');
   var detailEditButton = document.getElementById('detailEditButton');
   var detailDeleteButton = document.getElementById('detailDeleteButton');
+  var exportBackupButton = document.getElementById('exportBackupButton');
+  var importBackupButton = document.getElementById('importBackupButton');
+  var importBackupInput = document.getElementById('importBackupInput');
+
   var editingRecordId = null;
   var currentDetailId = null;
   var currentPhotoData = '';
@@ -305,6 +440,7 @@
 
   function formatDateInput(displayValue) {
     if (!displayValue) return getTodayValue();
+    if (displayValue.indexOf('-') > -1) return displayValue;
     var parts = displayValue.split('.');
     if (parts.length !== 3) return getTodayValue();
     return parts[0] + '-' + parts[1] + '-' + parts[2];
@@ -352,6 +488,25 @@
     });
   }
 
+  async function clearAllRecords() {
+    var db = await openDatabase();
+
+    return new Promise(function (resolve, reject) {
+      var tx = db.transaction('records', 'readwrite');
+      var store = tx.objectStore('records');
+      var request = store.clear();
+
+      request.onsuccess = function () {
+        resolve(true);
+      };
+
+      request.onerror = function () {
+        showToast('기존 기록을 비우는 중 오류가 생겼어요.');
+        reject(request.error);
+      };
+    });
+  }
+
   async function saveRecord(record) {
     var db = await openDatabase();
 
@@ -373,6 +528,33 @@
       request.onerror = function () {
         showToast('기록 저장 중 오류가 생겼어요.');
         reject(request.error);
+      };
+    });
+  }
+
+  async function saveRecordsBulk(records) {
+    var db = await openDatabase();
+
+    return new Promise(function (resolve, reject) {
+      var tx = db.transaction('records', 'readwrite');
+      var store = tx.objectStore('records');
+
+      for (var i = 0; i < records.length; i += 1) {
+        store.put(records[i]);
+      }
+
+      tx.oncomplete = function () {
+        resolve(true);
+      };
+
+      tx.onerror = function () {
+        showToast('복원 중 오류가 생겼어요.');
+        reject(tx.error);
+      };
+
+      tx.onabort = function () {
+        showToast('복원이 중단되었어요.');
+        reject(tx.error);
       };
     });
   }
@@ -422,6 +604,7 @@
   function getFilteredRecords(records, searchTerm) {
     var query = (searchTerm || '').trim().toLowerCase();
     if (!query) return records;
+
     return records.filter(function (record) {
       return String(record.mood || '').toLowerCase().includes(query)
         || String(record.place || '').toLowerCase().includes(query)
@@ -465,53 +648,48 @@
   }
 
   async function renderRecords() {
-  try {
-    var records = await getRecords();
-  } catch (error) {
-    console.error('getRecords 오류:', error);
-    // DB가 아직 없거나 열기 실패했을 때도 기본 화면은 보여주기
-    latestRecord.innerHTML = '';
-    searchResultText.textContent = '전체 기록 0건';
-    recordsList.innerHTML =
-      '<div class="empty-state">아직 남겨둔 기억이 없습니다. 첫 캠핑의 분위기부터 천천히 담아보세요.</div>';
-    return;
+    try {
+      var records = await getRecords();
+    } catch (error) {
+      console.error('getRecords 오류:', error);
+      latestRecord.innerHTML = '';
+      searchResultText.textContent = '전체 기록 0건';
+      recordsList.innerHTML = '<div class="empty-state">아직 남겨둔 기억이 없습니다. 첫 캠핑의 분위기부터 천천히 담아보세요.</div>';
+      return;
+    }
+
+    if (!Array.isArray(records) || records.length === 0) {
+      latestRecord.innerHTML = '';
+      searchResultText.textContent = '전체 기록 0건';
+      recordsList.innerHTML = '<div class="empty-state">아직 남겨둔 기억이 없습니다. 첫 캠핑의 분위기부터 천천히 담아보세요.</div>';
+      return;
+    }
+
+    var latest = records[0];
+    latestRecord.innerHTML = buildRecordCard(latest, shouldAnimateLatestCard);
+    shouldAnimateLatestCard = false;
+
+    var remainingRecords = records.slice(1);
+    var filteredRemainingRecords = getFilteredRecords(remainingRecords, currentSearchTerm);
+
+    searchResultText.textContent = currentSearchTerm.trim()
+      ? '지난 기억들 검색 결과 ' + filteredRemainingRecords.length + '건'
+      : '지난 기억들 ' + remainingRecords.length + '건';
+
+    if (remainingRecords.length === 0) {
+      recordsList.innerHTML = '<div class="empty-state">아직 지난 기억들은 없습니다. 다음 기록부터 이 아래에 차곡차곡 쌓입니다.</div>';
+      return;
+    }
+
+    if (currentSearchTerm.trim() && filteredRemainingRecords.length === 0) {
+      recordsList.innerHTML = '<div class="empty-state">이번에는 찾는 기억이 보이지 않습니다. 분위기나 장소를 다르게 떠올려보세요.</div>';
+      return;
+    }
+
+    recordsList.innerHTML = filteredRemainingRecords
+      .map(function (record) { return buildRecordCard(record, false); })
+      .join('');
   }
-
-  if (!Array.isArray(records) || records.length === 0) {
-    latestRecord.innerHTML = '';
-    searchResultText.textContent = '전체 기록 0건';
-    recordsList.innerHTML =
-      '<div class="empty-state">아직 남겨둔 기억이 없습니다. 첫 캠핑의 분위기부터 천천히 담아보세요.</div>';
-    return;
-  }
-
-  var latest = records[0];
-  latestRecord.innerHTML = buildRecordCard(latest, shouldAnimateLatestCard);
-  shouldAnimateLatestCard = false;
-
-  var remainingRecords = records.slice(1);
-  var filteredRemainingRecords = getFilteredRecords(remainingRecords, currentSearchTerm);
-
-  searchResultText.textContent = currentSearchTerm.trim()
-    ? '지난 기억들 검색 결과 ' + filteredRemainingRecords.length + '건'
-    : '지난 기억들 ' + remainingRecords.length + '건';
-
-  if (remainingRecords.length === 0) {
-    recordsList.innerHTML =
-      '<div class="empty-state">아직 지난 기억들은 없습니다. 다음 기록부터 이 아래에 차곡차곡 쌓입니다.</div>';
-    return;
-  }
-
-  if (currentSearchTerm.trim() && filteredRemainingRecords.length === 0) {
-    recordsList.innerHTML =
-      '<div class="empty-state">이번에는 찾는 기억이 보이지 않습니다. 분위기나 장소를 다르게 떠올려보세요.</div>';
-    return;
-  }
-
-  recordsList.innerHTML = filteredRemainingRecords
-    .map(function (record) { return buildRecordCard(record, false); })
-    .join('');
-}
 
   function setDefaultChoice(groupId, value) {
     var group = document.getElementById(groupId);
@@ -524,6 +702,7 @@
   function resetForm() {
     editingRecordId = null;
     currentPhotoData = '';
+    currentPhotoBlob = null;
     modalTitle.textContent = '이번 기억 남기기';
     saveRecordButton.textContent = '이 기억 저장하기';
     saveRecordButton.disabled = false;
@@ -552,7 +731,8 @@
       if (!record) return;
 
       editingRecordId = record.id;
-      currentPhotoData = record.photo || '';
+      currentPhotoData = isRestorablePhoto(record.photo) ? record.photo : '';
+      currentPhotoBlob = null;
       modalTitle.textContent = '기억 수정하기';
       saveRecordButton.textContent = '수정한 내용 저장하기';
       saveRecordButton.disabled = false;
@@ -561,13 +741,14 @@
       placeInput.value = record.place || '';
       noteInput.value = record.note || '';
       photoInput.value = '';
+
       setDefaultChoice('stayGroup', record.stay || '1박');
       setDefaultChoice('styleGroup', record.style || '솔로');
       setDefaultChoice('groundGroup', record.ground || '파쇄석');
       setDefaultChoice('weatherGroup', record.weather || '맑고 선선했어');
 
-      if (record.photo) {
-        photoPreview.src = record.photo;
+      if (currentPhotoData) {
+        photoPreview.src = currentPhotoData;
         photoPreview.style.display = 'block';
         photoStatus.textContent = '기존 사진이 유지됩니다. 새 사진을 고르면 교체됩니다.';
       } else {
@@ -602,7 +783,7 @@
         + buildDetailInfoRow('바닥 느낌', record.ground || '')
         + buildDetailInfoRow('그날의 날씨', record.weather || '맑고 선선했어');
 
-      if (record.photo) {
+      if (isRestorablePhoto(record.photo)) {
         detailPhoto.src = record.photo;
         detailPhoto.classList.add('show');
         detailEmptyPhoto.classList.remove('show');
@@ -643,8 +824,10 @@
 
   function compressImage(file, callback) {
     var reader = new FileReader();
+
     reader.onload = function (e) {
       var img = new Image();
+
       img.onload = function () {
         var maxSize = 960;
         var startWidth = img.width;
@@ -681,63 +864,54 @@
         drawHighQuality(currentCanvas, finalCanvas, targetWidth, targetHeight);
         callback(finalCanvas.toDataURL('image/jpeg', 0.65), targetWidth, targetHeight);
       };
+
       img.src = e.target.result;
     };
+
     reader.readAsDataURL(file);
   }
 
-    function compressImageToBlob(file, callback) {
-  var reader = new FileReader();
+  function isRestorablePhoto(photoValue) {
+    return typeof photoValue === 'string' && photoValue.indexOf('data:image/') === 0;
+  }
 
-  reader.onload = function (e) {
-    var img = new Image();
+  function sanitizeRecordPhoto(photoValue) {
+    if (isRestorablePhoto(photoValue)) return photoValue;
+    return '';
+  }
 
-    img.onload = function () {
-      var maxSize = 960;
-      var startWidth = img.width;
-      var startHeight = img.height;
-      var targetWidth = startWidth;
-      var targetHeight = startHeight;
+  function normalizeImportedRecord(raw, fallbackIndex) {
+    var now = Date.now() + fallbackIndex;
+    var rawDate = '';
 
-      if (startWidth > startHeight && startWidth > maxSize) {
-        targetHeight = Math.round(startHeight * (maxSize / startWidth));
-        targetWidth = maxSize;
-      } else if (startHeight >= startWidth && startHeight > maxSize) {
-        targetWidth = Math.round(startWidth * (maxSize / startHeight));
-        targetHeight = maxSize;
-      }
+    if (typeof raw.date === 'string' && raw.date.trim()) {
+      rawDate = raw.date.trim();
+    }
 
-      var sourceCanvas = createCanvas(startWidth, startHeight);
-      drawHighQuality(img, sourceCanvas, startWidth, startHeight);
+    if (rawDate.indexOf('-') > -1) {
+      rawDate = formatDateDisplay(rawDate);
+    }
 
-      var currentCanvas = sourceCanvas;
-      var currentWidth = startWidth;
-      var currentHeight = startHeight;
+    if (!rawDate) {
+      rawDate = formatDateDisplay(getTodayValue());
+    }
 
-      while (currentWidth * 0.5 > targetWidth && currentHeight * 0.5 > targetHeight) {
-        var stepWidth = Math.round(currentWidth * 0.5);
-        var stepHeight = Math.round(currentHeight * 0.5);
-        var stepCanvas = createCanvas(stepWidth, stepHeight);
-        drawHighQuality(currentCanvas, stepCanvas, stepWidth, stepHeight);
-        currentCanvas = stepCanvas;
-        currentWidth = stepWidth;
-        currentHeight = stepHeight;
-      }
-
-      var finalCanvas = createCanvas(targetWidth, targetHeight);
-      drawHighQuality(currentCanvas, finalCanvas, targetWidth, targetHeight);
-
-      finalCanvas.toBlob(function (blob) {
-        callback(blob, targetWidth, targetHeight);
-      }, 'image/jpeg', 0.65);
+    return {
+      id: Number(raw.id) || now,
+      mood: String(raw.mood || '').trim() || '이름 없는 하루',
+      date: rawDate,
+      place: String(raw.place || '').trim() || '이름 없는 캠핑장',
+      stay: String(raw.stay || '').trim() || '1박',
+      style: String(raw.style || '').trim() || '솔로',
+      ground: String(raw.ground || '').trim() || '파쇄석',
+      weather: String(raw.weather || '').trim() || '맑고 선선했어',
+      note: String(raw.note || '').trim() || '짧은 감상이 아직 없습니다.',
+      photo: sanitizeRecordPhoto(raw.photo),
+      createdAt: Number(raw.createdAt) || now,
+      updatedAt: Number(raw.updatedAt) || now
     };
+  }
 
-    img.src = e.target.result;
-  };
-
-  reader.readAsDataURL(file);
-}
-    
   function buildFormRecord() {
     var rawDate = dateInput.value || getTodayValue();
 
@@ -751,7 +925,7 @@
       ground: getActiveValue('groundGroup'),
       weather: getActiveValue('weatherGroup') || '맑고 선선했어',
       note: noteInput.value.trim() || '짧은 감상이 아직 없습니다.',
-      photo: currentPhotoData || ''
+      photo: sanitizeRecordPhoto(currentPhotoData)
     };
   }
 
@@ -775,6 +949,95 @@
     } catch (error) {
       console.error(error);
     }
+  }
+
+  async function exportBackup() {
+    try {
+      var records = await getRecords();
+      var backup = {
+        app: 'foresite',
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        recordCount: records.length,
+        records: records.map(function (record, index) {
+          return normalizeImportedRecord(record, index);
+        })
+      };
+
+      var fileName = 'foresite-backup-' + getTodayValue() + '.json';
+      var blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var link = document.createElement('a');
+
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      setTimeout(function () {
+        URL.revokeObjectURL(url);
+      }, 1000);
+
+      showToast('기억을 JSON 파일로 챙겨두었어요.');
+    } catch (error) {
+      console.error(error);
+      showToast('백업 파일을 만드는 중 오류가 생겼어요.');
+    }
+  }
+
+  async function restoreBackupFromFile(file) {
+    if (!file) return;
+
+    var reader = new FileReader();
+
+    reader.onload = async function (event) {
+      try {
+        var text = event.target.result;
+        var parsed = JSON.parse(text);
+        var sourceRecords = [];
+
+        if (Array.isArray(parsed)) {
+          sourceRecords = parsed;
+        } else if (parsed && Array.isArray(parsed.records)) {
+          sourceRecords = parsed.records;
+        } else {
+          showToast('복원할 수 있는 기록 형식이 아니에요.');
+          return;
+        }
+
+        var normalizedRecords = sourceRecords.map(function (item, index) {
+          return normalizeImportedRecord(item, index);
+        });
+
+        if (!window.confirm('현재 기록을 지우고 백업 파일 내용으로 복원할까요?')) {
+          return;
+        }
+
+        await clearAllRecords();
+        await saveRecordsBulk(normalizedRecords);
+        currentSearchTerm = '';
+        searchInput.value = '';
+        closeDetailView();
+        recordModal.classList.remove('show');
+        resetForm();
+        shouldAnimateLatestCard = false;
+        await renderRecords();
+        showToast('백업 파일에서 기억을 꺼내두었어요.');
+      } catch (error) {
+        console.error(error);
+        showToast('백업 파일을 읽는 중 오류가 생겼어요.');
+      } finally {
+        importBackupInput.value = '';
+      }
+    };
+
+    reader.onerror = function () {
+      showToast('파일을 읽지 못했어요.');
+      importBackupInput.value = '';
+    };
+
+    reader.readAsText(file, 'utf-8');
   }
 
   openModalButton.addEventListener('click', openCreateMode);
@@ -858,19 +1121,32 @@
     saveRecordButton.textContent = '사진 처리 중...';
     photoStatus.textContent = '사진을 더 자연스럽게 보이도록 조정하는 중입니다.';
 
-  compressImageToBlob(file, function (blob, width, height) {
-    currentPhotoBlob = blob;
-    currentPhotoData = URL.createObjectURL(blob);
-    photoPreview.src = currentPhotoData;
-    photoPreview.style.display = 'block';
-    photoStatus.textContent = '원본 ' + bytesToMB(file.size) + 'MB → 앱용 썸네일로 축소 완료 (' + width + '×' + height + ')';
-    saveRecordButton.disabled = false;
-    saveRecordButton.textContent = editingRecordId ? '수정한 내용 저장하기' : '이 기억 저장하기';
-  });
+    compressImage(file, function (dataUrl, width, height) {
+      currentPhotoBlob = null;
+      currentPhotoData = dataUrl;
+      photoPreview.src = currentPhotoData;
+      photoPreview.style.display = 'block';
+      photoStatus.textContent = '원본 ' + bytesToMB(file.size) + 'MB → 앱용 썸네일로 축소 완료 (' + width + '×' + height + ')';
+      saveRecordButton.disabled = false;
+      saveRecordButton.textContent = editingRecordId ? '수정한 내용 저장하기' : '이 기억 저장하기';
+    });
   });
 
   saveRecordButton.addEventListener('click', function () {
     submitRecord();
+  });
+
+  exportBackupButton.addEventListener('click', function () {
+    exportBackup();
+  });
+
+  importBackupButton.addEventListener('click', function () {
+    importBackupInput.click();
+  });
+
+  importBackupInput.addEventListener('change', function () {
+    var file = importBackupInput.files[0];
+    restoreBackupFromFile(file);
   });
 
   document.addEventListener('click', function (e) {
@@ -888,6 +1164,6 @@
   activateChoiceGroup('weatherGroup');
   resetForm();
   renderRecords();
-</script>
+  </script>
 </body>
 </html>
