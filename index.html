@@ -40,39 +40,7 @@
     .hero-label { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
     .hero-title { font-size: 28px; line-height: 1.2; font-weight: 700; margin: 0 0 10px; }
     .hero-text { font-size: 16px; line-height: 1.5; color: var(--muted); margin: 0 0 18px; }
-    .primary-button,.secondary-button,.choice-button,.close-button,.delete-button,.edit-button,.detail-back-button { border: none; cursor: pointer; font-family: inherit; }
-    .backup-row {
-  display: flex;
-  gap: 8px;
-  margin: 14px 0 18px;
-}
-
-.secondary-button {
-  border-radius: 16px;
-  font-size: 15px;
-  font-weight: 700;
-  padding: 14px 16px;
-  border: 1px solid rgba(217, 212, 202, 0.9);
-  white-space: nowrap;
-  letter-spacing: -0.2px;
-}
-
-.backup-button {
-  flex: 8;
-  background: #eee8f6;
-  color: #6d5a8c;
-  border-color: rgba(174, 160, 201, 0.55);
-}
-
-.restore-button {
-  flex: 2.6;
-  background: #e6eef7;
-  color: #4f6b8a;
-  border-color: rgba(145, 171, 201, 0.55);
-  font-size: 15px;
-  padding-left: 12px;
-  padding-right: 12px;
-}
+    .primary-button,.choice-button,.close-button,.delete-button,.edit-button,.detail-back-button { border: none; cursor: pointer; font-family: inherit; }
     .primary-button { width: 100%; border-radius: 16px; background: var(--accent); color: var(--white); font-size: 17px; font-weight: 700; padding: 16px; }
     .primary-button:disabled { opacity: 0.55; cursor: not-allowed; }
     .section { margin-top: 26px; }
@@ -149,11 +117,6 @@
     </section>
     <section class="section">
       <div id="latestRecord"></div>
-      <div class="backup-row">
-        <button type="button" class="secondary-button backup-button" id="exportBackupButton">기억 챙겨두기</button>
-        <button type="button" class="secondary-button restore-button" id="restoreBackupButton">꺼내보기</button>
-        <input type="file" id="restoreFileInput" accept=".json,application/json" style="display:none;">
-      </div>
       <section class="search-card">
         <div class="search-label">지난 기억 찾기</div>
         <input type="search" id="searchInput" class="search-input" placeholder="분위기나 장소로 찾아보세요">
@@ -260,49 +223,6 @@
   <script>
   var dbPromise = null;
 
-  var els = {
-    openModalButton: document.getElementById('openModalButton'),
-    closeModalButton: document.getElementById('closeModalButton'),
-    recordModal: document.getElementById('recordModal'),
-    saveRecordButton: document.getElementById('saveRecordButton'),
-    recordsList: document.getElementById('recordsList'),
-    latestRecord: document.getElementById('latestRecord'),
-    exportBackupButton: document.getElementById('exportBackupButton'),
-    restoreBackupButton: document.getElementById('restoreBackupButton'),
-    restoreFileInput: document.getElementById('restoreFileInput'),
-    modalTitle: document.getElementById('modalTitle'),
-    searchInput: document.getElementById('searchInput'),
-    searchResultText: document.getElementById('searchResultText'),
-    moodInput: document.getElementById('moodInput'),
-    dateInput: document.getElementById('dateInput'),
-    placeInput: document.getElementById('placeInput'),
-    noteInput: document.getElementById('noteInput'),
-    photoInput: document.getElementById('photoInput'),
-    photoPreview: document.getElementById('photoPreview'),
-    photoStatus: document.getElementById('photoStatus'),
-    detailModal: document.getElementById('detailModal'),
-    detailSheet: document.getElementById('detailSheet'),
-    closeDetailButton: document.getElementById('closeDetailButton'),
-    detailMood: document.getElementById('detailMood'),
-    detailNote: document.getElementById('detailNote'),
-    detailPhoto: document.getElementById('detailPhoto'),
-    detailEmptyPhoto: document.getElementById('detailEmptyPhoto'),
-    detailInfoBlock: document.getElementById('detailInfoBlock'),
-    detailEditButton: document.getElementById('detailEditButton'),
-    detailDeleteButton: document.getElementById('detailDeleteButton'),
-    toastMessage: document.getElementById('toastMessage')
-  };
-
-  var state = {
-    editingRecordId: null,
-    currentDetailId: null,
-    currentPhotoData: '',
-    currentPhotoBlob: null,
-    currentSearchTerm: '',
-    toastTimer: null,
-    shouldAnimateLatestCard: false
-  };
-
   function openDatabase() {
     if (dbPromise) return dbPromise;
 
@@ -332,6 +252,41 @@
 
     return dbPromise;
   }
+
+  var openModalButton = document.getElementById('openModalButton');
+  var closeModalButton = document.getElementById('closeModalButton');
+  var recordModal = document.getElementById('recordModal');
+  var saveRecordButton = document.getElementById('saveRecordButton');
+  var recordsList = document.getElementById('recordsList');
+  var latestRecord = document.getElementById('latestRecord');
+  var modalTitle = document.getElementById('modalTitle');
+  var searchInput = document.getElementById('searchInput');
+  var searchResultText = document.getElementById('searchResultText');
+  var moodInput = document.getElementById('moodInput');
+  var dateInput = document.getElementById('dateInput');
+  var placeInput = document.getElementById('placeInput');
+  var noteInput = document.getElementById('noteInput');
+  var photoInput = document.getElementById('photoInput');
+  var photoPreview = document.getElementById('photoPreview');
+  var photoStatus = document.getElementById('photoStatus');
+  var detailModal = document.getElementById('detailModal');
+  var detailSheet = document.getElementById('detailSheet');
+  var closeDetailButton = document.getElementById('closeDetailButton');
+  var detailMood = document.getElementById('detailMood');
+  var detailNote = document.getElementById('detailNote');
+  var detailPhoto = document.getElementById('detailPhoto');
+  var detailEmptyPhoto = document.getElementById('detailEmptyPhoto');
+  var detailInfoBlock = document.getElementById('detailInfoBlock');
+  var detailEditButton = document.getElementById('detailEditButton');
+  var detailDeleteButton = document.getElementById('detailDeleteButton');
+  var editingRecordId = null;
+  var currentDetailId = null;
+  var currentPhotoData = '';
+  var currentPhotoBlob = null;
+  var currentSearchTerm = '';
+  var toastMessage = document.getElementById('toastMessage');
+  var toastTimer = null;
+  var shouldAnimateLatestCard = false;
 
   function getTodayValue() {
     var today = new Date();
@@ -364,7 +319,6 @@
   function activateChoiceGroup(groupId) {
     var group = document.getElementById(groupId);
     var buttons = group.querySelectorAll('.choice-button');
-
     buttons.forEach(function (button) {
       button.addEventListener('click', function () {
         buttons.forEach(function (btn) {
@@ -465,150 +419,9 @@
     return saveRecord(updatedRecord);
   }
 
-    function downloadTextFile(filename, text) {
-  async function exportBackup() {
-  try {
-    var records = await getRecords();
-    var today = getTodayValue();
-    var backupData = {
-      app: 'foresite',
-      version: 1,
-      exportedAt: new Date().toISOString(),
-      recordCount: records.length,
-      records: records
-    };
-
-    downloadTextFile(
-      'foresite-backup-' + today + '.json',
-      JSON.stringify(backupData, null, 2)
-    );
-
-    showToast('백업 파일을 내보냈어요.');
-  } catch (error) {
-    console.error(error);
-    showToast('백업 파일을 만드는 중 문제가 생겼어요.');
-  }
-}
-
-function readFileAsText(file) {
-  return new Promise(function (resolve, reject) {
-    var reader = new FileReader();
-
-    reader.onload = function () {
-      resolve(reader.result);
-    };
-
-    reader.onerror = function () {
-      reject(new Error('FILE_READ_FAILED'));
-    };
-
-    reader.readAsText(file);
-  });
-}
-
-async function importBackupFromText(jsonText) {
-  var parsed;
-
-  try {
-    parsed = JSON.parse(jsonText);
-  } catch (error) {
-    throw new Error('JSON_PARSE_FAILED');
-  }
-
-  if (!parsed || !Array.isArray(parsed.records)) {
-    throw new Error('INVALID_BACKUP_FORMAT');
-  }
-
-  var records = parsed.records;
-  console.log('backup records length', records.length);
-
-  var importedCount = 0;
-
-  for (var i = 0; i < records.length; i += 1) {
-    var record = records[i];
-
-    if (!record || typeof record !== 'object') continue;
-    if (!record.id) continue;
-
-    var normalizedRecord = {
-      id: Number(record.id),
-      createdAt: record.createdAt || Date.now(),
-      updatedAt: record.updatedAt || Date.now(),
-      mood: record.mood || '이름 없는 하루',
-      date: record.date || '',
-      place: record.place || '이름 없는 캠핑장',
-      stay: record.stay || '1박',
-      style: record.style || '솔로',
-      ground: record.ground || '파쇄석',
-      weather: record.weather || '맑고 선선했어',
-      note: record.note || '짧은 감상이 아직 없습니다.',
-      photo: ''
-    };
-
-    if (typeof record.photo === 'string') {
-      if (record.photo.indexOf('data:image/') === 0) {
-        normalizedRecord.photo = record.photo;
-      } else if (record.photo.indexOf('blob:') === 0) {
-        normalizedRecord.photo = '';
-      }
-    }
-
-    await saveRecord(normalizedRecord);
-    console.log('saved record', normalizedRecord.id, normalizedRecord.mood);
-    importedCount += 1;
-  }
-
-  return importedCount;
-}
-
-async function handleRestoreFile(file) {
-  console.log('restore start', file && file.name, file && file.size);
-  if (!file) return;
-
-  try {
-    var jsonText = await readFileAsText(file);
-    console.log('json loaded length', jsonText.length);
-
-    var importedCount = await importBackupFromText(jsonText);
-    console.log('importedCount', importedCount);
-
-    await renderRecords();
-    console.log('render finished');
-
-    if (importedCount === 0) {
-      showToast('꺼낼 수 있는 기억이 없었어요.');
-      return;
-    }
-
-    showToast(importedCount + '개의 기억을 다시 꺼내두었어요.');
-  } catch (error) {
-    console.error(error);
-
-    if (error.message === 'JSON_PARSE_FAILED') {
-      showToast('백업 파일 형식이 올바르지 않아요.');
-      return;
-    }
-
-    if (error.message === 'INVALID_BACKUP_FORMAT') {
-      showToast('foresite 백업 파일이 아닌 것 같아요.');
-      return;
-    }
-
-    if (error.message === 'FILE_READ_FAILED') {
-      showToast('백업 파일을 읽는 중 문제가 생겼어요.');
-      return;
-    }
-
-    showToast('기억을 다시 꺼내는 중 문제가 생겼어요.');
-  } finally {
-    els.restoreFileInput.value = '';
-  }
-}
-    
   function getFilteredRecords(records, searchTerm) {
     var query = (searchTerm || '').trim().toLowerCase();
     if (!query) return records;
-
     return records.filter(function (record) {
       return String(record.mood || '').toLowerCase().includes(query)
         || String(record.place || '').toLowerCase().includes(query)
@@ -618,11 +431,11 @@ async function handleRestoreFile(file) {
   }
 
   function showToast(message) {
-    if (state.toastTimer) clearTimeout(state.toastTimer);
-    els.toastMessage.textContent = message;
-    els.toastMessage.classList.add('show');
-    state.toastTimer = setTimeout(function () {
-      els.toastMessage.classList.remove('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastMessage.textContent = message;
+    toastMessage.classList.add('show');
+    toastTimer = setTimeout(function () {
+      toastMessage.classList.remove('show');
     }, 1800);
   }
 
@@ -652,86 +465,76 @@ async function handleRestoreFile(file) {
   }
 
   async function renderRecords() {
-    try {
-      var records = await getRecords();
-    } catch (error) {
-      console.error('getRecords 오류:', error);
-      els.latestRecord.innerHTML = '';
-      els.searchResultText.textContent = '전체 기록 0건';
-      els.recordsList.innerHTML =
-        '<div class="empty-state">아직 남겨둔 기억이 없습니다. 첫 캠핑의 분위기부터 천천히 담아보세요.</div>';
-      return;
-    }
-
-    if (!Array.isArray(records) || records.length === 0) {
-      els.latestRecord.innerHTML = '';
-      els.searchResultText.textContent = '전체 기록 0건';
-      els.recordsList.innerHTML =
-        '<div class="empty-state">아직 남겨둔 기억이 없습니다. 첫 캠핑의 분위기부터 천천히 담아보세요.</div>';
-      return;
-    }
-
-    var latest = records[0];
-    els.latestRecord.innerHTML = buildRecordCard(latest, state.shouldAnimateLatestCard);
-    state.shouldAnimateLatestCard = false;
-
-    var remainingRecords = records.slice(1);
-    var filteredRemainingRecords = getFilteredRecords(remainingRecords, state.currentSearchTerm);
-
-    els.searchResultText.textContent = state.currentSearchTerm.trim()
-      ? '지난 기억들 검색 결과 ' + filteredRemainingRecords.length + '건'
-      : '지난 기억들 ' + remainingRecords.length + '건';
-
-    if (remainingRecords.length === 0) {
-      els.recordsList.innerHTML =
-        '<div class="empty-state">아직 지난 기억들은 없습니다. 다음 기록부터 이 아래에 차곡차곡 쌓입니다.</div>';
-      return;
-    }
-
-    if (state.currentSearchTerm.trim() && filteredRemainingRecords.length === 0) {
-      els.recordsList.innerHTML =
-        '<div class="empty-state">이번에는 찾는 기억이 보이지 않습니다. 분위기나 장소를 다르게 떠올려보세요.</div>';
-      return;
-    }
-
-    els.recordsList.innerHTML = filteredRemainingRecords
-      .map(function (record) { return buildRecordCard(record, false); })
-      .join('');
+  try {
+    var records = await getRecords();
+  } catch (error) {
+    console.error('getRecords 오류:', error);
+    // DB가 아직 없거나 열기 실패했을 때도 기본 화면은 보여주기
+    latestRecord.innerHTML = '';
+    searchResultText.textContent = '전체 기록 0건';
+    recordsList.innerHTML =
+      '<div class="empty-state">아직 남겨둔 기억이 없습니다. 첫 캠핑의 분위기부터 천천히 담아보세요.</div>';
+    return;
   }
+
+  if (!Array.isArray(records) || records.length === 0) {
+    latestRecord.innerHTML = '';
+    searchResultText.textContent = '전체 기록 0건';
+    recordsList.innerHTML =
+      '<div class="empty-state">아직 남겨둔 기억이 없습니다. 첫 캠핑의 분위기부터 천천히 담아보세요.</div>';
+    return;
+  }
+
+  var latest = records[0];
+  latestRecord.innerHTML = buildRecordCard(latest, shouldAnimateLatestCard);
+  shouldAnimateLatestCard = false;
+
+  var remainingRecords = records.slice(1);
+  var filteredRemainingRecords = getFilteredRecords(remainingRecords, currentSearchTerm);
+
+  searchResultText.textContent = currentSearchTerm.trim()
+    ? '지난 기억들 검색 결과 ' + filteredRemainingRecords.length + '건'
+    : '지난 기억들 ' + remainingRecords.length + '건';
+
+  if (remainingRecords.length === 0) {
+    recordsList.innerHTML =
+      '<div class="empty-state">아직 지난 기억들은 없습니다. 다음 기록부터 이 아래에 차곡차곡 쌓입니다.</div>';
+    return;
+  }
+
+  if (currentSearchTerm.trim() && filteredRemainingRecords.length === 0) {
+    recordsList.innerHTML =
+      '<div class="empty-state">이번에는 찾는 기억이 보이지 않습니다. 분위기나 장소를 다르게 떠올려보세요.</div>';
+    return;
+  }
+
+  recordsList.innerHTML = filteredRemainingRecords
+    .map(function (record) { return buildRecordCard(record, false); })
+    .join('');
+}
 
   function setDefaultChoice(groupId, value) {
     var group = document.getElementById(groupId);
     var buttons = group.querySelectorAll('.choice-button');
-
     buttons.forEach(function (button) {
       button.classList.toggle('active', button.getAttribute('data-value') === value);
     });
   }
 
-  function clearPhotoPreview() {
-    els.photoPreview.style.display = 'none';
-    els.photoPreview.removeAttribute('src');
-  }
-
-  function showPhotoPreview(src) {
-    els.photoPreview.src = src;
-    els.photoPreview.style.display = 'block';
-  }
-
   function resetForm() {
-    state.editingRecordId = null;
-    state.currentPhotoData = '';
-    state.currentPhotoBlob = null;
-    els.modalTitle.textContent = '이번 기억 남기기';
-    els.saveRecordButton.textContent = '이 기억 저장하기';
-    els.saveRecordButton.disabled = false;
-    els.moodInput.value = '';
-    els.dateInput.value = getTodayValue();
-    els.placeInput.value = '';
-    els.noteInput.value = '';
-    els.photoInput.value = '';
-    clearPhotoPreview();
-    els.photoStatus.textContent = '';
+    editingRecordId = null;
+    currentPhotoData = '';
+    modalTitle.textContent = '이번 기억 남기기';
+    saveRecordButton.textContent = '이 기억 저장하기';
+    saveRecordButton.disabled = false;
+    moodInput.value = '';
+    dateInput.value = getTodayValue();
+    placeInput.value = '';
+    noteInput.value = '';
+    photoInput.value = '';
+    photoPreview.style.display = 'none';
+    photoPreview.removeAttribute('src');
+    photoStatus.textContent = '';
     setDefaultChoice('stayGroup', '1박');
     setDefaultChoice('styleGroup', '솔로');
     setDefaultChoice('groundGroup', '파쇄석');
@@ -740,7 +543,7 @@ async function handleRestoreFile(file) {
 
   function openCreateMode() {
     resetForm();
-    els.recordModal.classList.add('show');
+    recordModal.classList.add('show');
   }
 
   async function openEditMode(recordId) {
@@ -748,31 +551,32 @@ async function handleRestoreFile(file) {
       var record = await findRecordById(recordId);
       if (!record) return;
 
-      state.editingRecordId = record.id;
-      state.currentPhotoData = record.photo || '';
-      state.currentPhotoBlob = null;
-      els.modalTitle.textContent = '기억 수정하기';
-      els.saveRecordButton.textContent = '수정한 내용 저장하기';
-      els.saveRecordButton.disabled = false;
-      els.moodInput.value = record.mood || '';
-      els.dateInput.value = formatDateInput(record.date);
-      els.placeInput.value = record.place || '';
-      els.noteInput.value = record.note || '';
-      els.photoInput.value = '';
+      editingRecordId = record.id;
+      currentPhotoData = record.photo || '';
+      modalTitle.textContent = '기억 수정하기';
+      saveRecordButton.textContent = '수정한 내용 저장하기';
+      saveRecordButton.disabled = false;
+      moodInput.value = record.mood || '';
+      dateInput.value = formatDateInput(record.date);
+      placeInput.value = record.place || '';
+      noteInput.value = record.note || '';
+      photoInput.value = '';
       setDefaultChoice('stayGroup', record.stay || '1박');
       setDefaultChoice('styleGroup', record.style || '솔로');
       setDefaultChoice('groundGroup', record.ground || '파쇄석');
       setDefaultChoice('weatherGroup', record.weather || '맑고 선선했어');
 
       if (record.photo) {
-        showPhotoPreview(record.photo);
-        els.photoStatus.textContent = '기존 사진이 유지됩니다. 새 사진을 고르면 교체됩니다.';
+        photoPreview.src = record.photo;
+        photoPreview.style.display = 'block';
+        photoStatus.textContent = '기존 사진이 유지됩니다. 새 사진을 고르면 교체됩니다.';
       } else {
-        clearPhotoPreview();
-        els.photoStatus.textContent = '사진이 없습니다. 새 사진을 추가할 수 있습니다.';
+        photoPreview.style.display = 'none';
+        photoPreview.removeAttribute('src');
+        photoStatus.textContent = '사진이 없습니다. 새 사진을 추가할 수 있습니다.';
       }
 
-      els.recordModal.classList.add('show');
+      recordModal.classList.add('show');
     } catch (error) {
       console.error(error);
     }
@@ -787,10 +591,10 @@ async function handleRestoreFile(file) {
       var record = await findRecordById(recordId);
       if (!record) return;
 
-      state.currentDetailId = record.id;
-      els.detailMood.textContent = record.mood || '이름 없는 하루';
-      els.detailNote.textContent = record.note || '짧은 감상이 아직 없습니다.';
-      els.detailInfoBlock.innerHTML = ''
+      currentDetailId = record.id;
+      detailMood.textContent = record.mood || '이름 없는 하루';
+      detailNote.textContent = record.note || '짧은 감상이 아직 없습니다.';
+      detailInfoBlock.innerHTML = ''
         + buildDetailInfoRow('다녀온 날짜', record.date || '')
         + buildDetailInfoRow('캠핑장', record.place || '기록되지 않음')
         + buildDetailInfoRow('머문 시간', record.stay || '')
@@ -799,24 +603,24 @@ async function handleRestoreFile(file) {
         + buildDetailInfoRow('그날의 날씨', record.weather || '맑고 선선했어');
 
       if (record.photo) {
-        els.detailPhoto.src = record.photo;
-        els.detailPhoto.classList.add('show');
-        els.detailEmptyPhoto.classList.remove('show');
+        detailPhoto.src = record.photo;
+        detailPhoto.classList.add('show');
+        detailEmptyPhoto.classList.remove('show');
       } else {
-        els.detailPhoto.removeAttribute('src');
-        els.detailPhoto.classList.remove('show');
-        els.detailEmptyPhoto.classList.add('show');
+        detailPhoto.removeAttribute('src');
+        detailPhoto.classList.remove('show');
+        detailEmptyPhoto.classList.add('show');
       }
 
-      els.detailModal.classList.add('show');
+      detailModal.classList.add('show');
     } catch (error) {
       console.error(error);
     }
   }
 
   function closeDetailView() {
-    els.detailModal.classList.remove('show');
-    state.currentDetailId = null;
+    detailModal.classList.remove('show');
+    currentDetailId = null;
   }
 
   function bytesToMB(bytes) {
@@ -837,66 +641,95 @@ async function handleRestoreFile(file) {
     ctx.drawImage(source, 0, 0, Math.round(width), Math.round(height));
   }
 
-  function getResizedDimensions(startWidth, startHeight, maxSize) {
-    var targetWidth = startWidth;
-    var targetHeight = startHeight;
+  function compressImage(file, callback) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var img = new Image();
+      img.onload = function () {
+        var maxSize = 960;
+        var startWidth = img.width;
+        var startHeight = img.height;
+        var targetWidth = startWidth;
+        var targetHeight = startHeight;
 
-    if (startWidth > startHeight && startWidth > maxSize) {
-      targetHeight = Math.round(startHeight * (maxSize / startWidth));
-      targetWidth = maxSize;
-    } else if (startHeight >= startWidth && startHeight > maxSize) {
-      targetWidth = Math.round(startWidth * (maxSize / startHeight));
-      targetHeight = maxSize;
-    }
+        if (startWidth > startHeight && startWidth > maxSize) {
+          targetHeight = Math.round(startHeight * (maxSize / startWidth));
+          targetWidth = maxSize;
+        } else if (startHeight >= startWidth && startHeight > maxSize) {
+          targetWidth = Math.round(startWidth * (maxSize / startHeight));
+          targetHeight = maxSize;
+        }
 
-    return {
-      width: targetWidth,
-      height: targetHeight
+        var sourceCanvas = createCanvas(startWidth, startHeight);
+        drawHighQuality(img, sourceCanvas, startWidth, startHeight);
+
+        var currentCanvas = sourceCanvas;
+        var currentWidth = startWidth;
+        var currentHeight = startHeight;
+
+        while (currentWidth * 0.5 > targetWidth && currentHeight * 0.5 > targetHeight) {
+          var stepWidth = Math.round(currentWidth * 0.5);
+          var stepHeight = Math.round(currentHeight * 0.5);
+          var stepCanvas = createCanvas(stepWidth, stepHeight);
+          drawHighQuality(currentCanvas, stepCanvas, stepWidth, stepHeight);
+          currentCanvas = stepCanvas;
+          currentWidth = stepWidth;
+          currentHeight = stepHeight;
+        }
+
+        var finalCanvas = createCanvas(targetWidth, targetHeight);
+        drawHighQuality(currentCanvas, finalCanvas, targetWidth, targetHeight);
+        callback(finalCanvas.toDataURL('image/jpeg', 0.65), targetWidth, targetHeight);
+      };
+      img.src = e.target.result;
     };
+    reader.readAsDataURL(file);
   }
 
-  function downscaleImage(img, maxSize) {
-    var startWidth = img.width;
-    var startHeight = img.height;
-    var resized = getResizedDimensions(startWidth, startHeight, maxSize);
-
-    var sourceCanvas = createCanvas(startWidth, startHeight);
-    drawHighQuality(img, sourceCanvas, startWidth, startHeight);
-
-    var currentCanvas = sourceCanvas;
-    var currentWidth = startWidth;
-    var currentHeight = startHeight;
-
-    while (currentWidth * 0.5 > resized.width && currentHeight * 0.5 > resized.height) {
-      var stepWidth = Math.round(currentWidth * 0.5);
-      var stepHeight = Math.round(currentHeight * 0.5);
-      var stepCanvas = createCanvas(stepWidth, stepHeight);
-      drawHighQuality(currentCanvas, stepCanvas, stepWidth, stepHeight);
-      currentCanvas = stepCanvas;
-      currentWidth = stepWidth;
-      currentHeight = stepHeight;
-    }
-
-    var finalCanvas = createCanvas(resized.width, resized.height);
-    drawHighQuality(currentCanvas, finalCanvas, resized.width, resized.height);
-
-    return {
-      canvas: finalCanvas,
-      width: resized.width,
-      height: resized.height
-    };
-  }
-
-  function compressImageToDataUrl(file, callback) {
+    function compressImageToBlob(file, callback) {
   var reader = new FileReader();
 
   reader.onload = function (e) {
     var img = new Image();
 
     img.onload = function () {
-      var result = downscaleImage(img, 960);
-      var dataUrl = result.canvas.toDataURL('image/jpeg', 0.65);
-      callback(dataUrl, result.width, result.height);
+      var maxSize = 960;
+      var startWidth = img.width;
+      var startHeight = img.height;
+      var targetWidth = startWidth;
+      var targetHeight = startHeight;
+
+      if (startWidth > startHeight && startWidth > maxSize) {
+        targetHeight = Math.round(startHeight * (maxSize / startWidth));
+        targetWidth = maxSize;
+      } else if (startHeight >= startWidth && startHeight > maxSize) {
+        targetWidth = Math.round(startWidth * (maxSize / startHeight));
+        targetHeight = maxSize;
+      }
+
+      var sourceCanvas = createCanvas(startWidth, startHeight);
+      drawHighQuality(img, sourceCanvas, startWidth, startHeight);
+
+      var currentCanvas = sourceCanvas;
+      var currentWidth = startWidth;
+      var currentHeight = startHeight;
+
+      while (currentWidth * 0.5 > targetWidth && currentHeight * 0.5 > targetHeight) {
+        var stepWidth = Math.round(currentWidth * 0.5);
+        var stepHeight = Math.round(currentHeight * 0.5);
+        var stepCanvas = createCanvas(stepWidth, stepHeight);
+        drawHighQuality(currentCanvas, stepCanvas, stepWidth, stepHeight);
+        currentCanvas = stepCanvas;
+        currentWidth = stepWidth;
+        currentHeight = stepHeight;
+      }
+
+      var finalCanvas = createCanvas(targetWidth, targetHeight);
+      drawHighQuality(currentCanvas, finalCanvas, targetWidth, targetHeight);
+
+      finalCanvas.toBlob(function (blob) {
+        callback(blob, targetWidth, targetHeight);
+      }, 'image/jpeg', 0.65);
     };
 
     img.src = e.target.result;
@@ -904,27 +737,27 @@ async function handleRestoreFile(file) {
 
   reader.readAsDataURL(file);
 }
-
+    
   function buildFormRecord() {
-    var rawDate = els.dateInput.value || getTodayValue();
+    var rawDate = dateInput.value || getTodayValue();
 
     return {
-      id: state.editingRecordId ? Number(state.editingRecordId) : Date.now(),
-      mood: els.moodInput.value.trim() || '이름 없는 하루',
+      id: editingRecordId ? Number(editingRecordId) : Date.now(),
+      mood: moodInput.value.trim() || '이름 없는 하루',
       date: formatDateDisplay(rawDate),
-      place: els.placeInput.value.trim() || '이름 없는 캠핑장',
+      place: placeInput.value.trim() || '이름 없는 캠핑장',
       stay: getActiveValue('stayGroup'),
       style: getActiveValue('styleGroup'),
       ground: getActiveValue('groundGroup'),
       weather: getActiveValue('weatherGroup') || '맑고 선선했어',
-      note: els.noteInput.value.trim() || '짧은 감상이 아직 없습니다.',
-      photo: state.currentPhotoData || ''
+      note: noteInput.value.trim() || '짧은 감상이 아직 없습니다.',
+      photo: currentPhotoData || ''
     };
   }
 
   async function submitRecord() {
     var record = buildFormRecord();
-    var isEditing = !!state.editingRecordId;
+    var isEditing = !!editingRecordId;
 
     try {
       if (isEditing) {
@@ -932,62 +765,62 @@ async function handleRestoreFile(file) {
         showToast('기억을 가지런히 다듬어 두었습니다.');
       } else {
         await saveRecord(record);
-        state.shouldAnimateLatestCard = true;
+        shouldAnimateLatestCard = true;
         showToast('새로운 기억을 조용히 놓아두었습니다.');
       }
 
       await renderRecords();
-      els.recordModal.classList.remove('show');
+      recordModal.classList.remove('show');
       resetForm();
     } catch (error) {
       console.error(error);
     }
   }
 
-  els.openModalButton.addEventListener('click', openCreateMode);
+  openModalButton.addEventListener('click', openCreateMode);
 
-  els.closeModalButton.addEventListener('click', function () {
-    els.recordModal.classList.remove('show');
+  closeModalButton.addEventListener('click', function () {
+    recordModal.classList.remove('show');
     resetForm();
   });
 
-  els.recordModal.addEventListener('click', function (e) {
-    if (e.target === els.recordModal) {
-      els.recordModal.classList.remove('show');
+  recordModal.addEventListener('click', function (e) {
+    if (e.target === recordModal) {
+      recordModal.classList.remove('show');
       resetForm();
     }
   });
 
-  els.closeDetailButton.addEventListener('click', function (e) {
+  closeDetailButton.addEventListener('click', function (e) {
     e.preventDefault();
     e.stopPropagation();
     closeDetailView();
   });
 
-  els.detailSheet.addEventListener('click', function (e) {
+  detailSheet.addEventListener('click', function (e) {
     e.stopPropagation();
   });
 
-  els.detailModal.addEventListener('click', function (e) {
-    if (e.target === els.detailModal) closeDetailView();
+  detailModal.addEventListener('click', function (e) {
+    if (e.target === detailModal) closeDetailView();
   });
 
-  els.detailEditButton.addEventListener('click', function (e) {
+  detailEditButton.addEventListener('click', function (e) {
     e.preventDefault();
     e.stopPropagation();
-    if (!state.currentDetailId) return;
-    var recordId = state.currentDetailId;
-    els.detailModal.classList.remove('show');
+    if (!currentDetailId) return;
+    var recordId = currentDetailId;
+    detailModal.classList.remove('show');
     openEditMode(recordId);
   });
 
-  els.detailDeleteButton.addEventListener('click', function (e) {
+  detailDeleteButton.addEventListener('click', function (e) {
     e.preventDefault();
     e.stopPropagation();
-    if (!state.currentDetailId) return;
+    if (!currentDetailId) return;
     if (!window.confirm('이 기록을 삭제할까요?')) return;
 
-    deleteRecord(state.currentDetailId)
+    deleteRecord(currentDetailId)
       .then(function () {
         closeDetailView();
         renderRecords();
@@ -997,72 +830,53 @@ async function handleRestoreFile(file) {
       });
   });
 
-  els.searchInput.addEventListener('input', function (e) {
-    state.currentSearchTerm = e.target.value || '';
+  searchInput.addEventListener('input', function (e) {
+    currentSearchTerm = e.target.value || '';
     renderRecords();
   });
 
-  els.photoInput.addEventListener('change', function () {
-    var file = els.photoInput.files[0];
+  photoInput.addEventListener('change', function () {
+    var file = photoInput.files[0];
 
     if (!file) {
-      if (state.currentPhotoData) {
-        showPhotoPreview(state.currentPhotoData);
-        els.photoStatus.textContent = '기존 사진이 유지됩니다.';
+      if (currentPhotoData) {
+        photoPreview.src = currentPhotoData;
+        photoPreview.style.display = 'block';
+        photoStatus.textContent = '기존 사진이 유지됩니다.';
       } else {
-        clearPhotoPreview();
-        els.photoStatus.textContent = '';
+        photoPreview.style.display = 'none';
+        photoPreview.removeAttribute('src');
+        photoStatus.textContent = '';
       }
 
-      els.saveRecordButton.disabled = false;
-      els.saveRecordButton.textContent = state.editingRecordId ? '수정한 내용 저장하기' : '이 기억 저장하기';
+      saveRecordButton.disabled = false;
+      saveRecordButton.textContent = editingRecordId ? '수정한 내용 저장하기' : '이 기억 저장하기';
       return;
     }
 
-    els.saveRecordButton.disabled = true;
-    els.saveRecordButton.textContent = '사진 처리 중...';
-    els.photoStatus.textContent = '사진을 더 자연스럽게 보이도록 조정하는 중입니다.';
+    saveRecordButton.disabled = true;
+    saveRecordButton.textContent = '사진 처리 중...';
+    photoStatus.textContent = '사진을 더 자연스럽게 보이도록 조정하는 중입니다.';
 
-    compressImageToDataUrl(file, function (dataUrl, width, height) {
-  state.currentPhotoBlob = null;
-  state.currentPhotoData = dataUrl;
-  showPhotoPreview(state.currentPhotoData);
-  els.photoStatus.textContent = '원본 ' + bytesToMB(file.size) + 'MB → 앱용 썸네일로 축소 완료 (' + width + '×' + height + ')';
-  els.saveRecordButton.disabled = false;
-  els.saveRecordButton.textContent = state.editingRecordId ? '수정한 내용 저장하기' : '이 기억 저장하기';
-});
+  compressImageToBlob(file, function (blob, width, height) {
+    currentPhotoBlob = blob;
+    currentPhotoData = URL.createObjectURL(blob);
+    photoPreview.src = currentPhotoData;
+    photoPreview.style.display = 'block';
+    photoStatus.textContent = '원본 ' + bytesToMB(file.size) + 'MB → 앱용 썸네일로 축소 완료 (' + width + '×' + height + ')';
+    saveRecordButton.disabled = false;
+    saveRecordButton.textContent = editingRecordId ? '수정한 내용 저장하기' : '이 기억 저장하기';
+  });
   });
 
-  els.saveRecordButton.addEventListener('click', function () {
+  saveRecordButton.addEventListener('click', function () {
     submitRecord();
   });
 
-    els.exportBackupButton.addEventListener('click', function () {
-  exportBackup();
-});
-
-    els.restoreBackupButton.addEventListener('click', function () {
-  els.restoreFileInput.click();
-});
-
-els.restoreFileInput.addEventListener('change', function (e) {
-  var file = e.target.files && e.target.files[0];
-  if (!file) return;
-
-  var ok = window.confirm('이 백업 파일의 기억들을 지금 앱에 다시 꺼내올까요?');
-  if (!ok) {
-    els.restoreFileInput.value = '';
-    return;
-  }
-
-  handleRestoreFile(file);
-});
-    
   document.addEventListener('click', function (e) {
     var card = e.target.closest('.trip-card');
     if (!card) return;
     if (e.target.closest('.edit-button') || e.target.closest('.delete-button')) return;
-
     var recordId = card.getAttribute('data-id');
     if (!recordId) return;
     openDetailView(recordId);
