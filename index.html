@@ -65,9 +65,14 @@
     box-shadow: var(--shadow);
   }
 
-  .hero-card { border-radius: 24px; padding: 18px 20px 16px; margin-bottom: 14px; }
-  .hero-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
-  .hero-title { font-size: 24px; line-height: 1.25; font-weight: 800; margin: 0 0 14px; letter-spacing: -0.3px; }
+  .hero-card {
+    border-radius: 24px;
+    padding: 20px;
+    margin-bottom: 18px;
+  }
+
+  .hero-label { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+  .hero-title { font-size: 28px; line-height: 1.2; font-weight: 700; margin: 0 0 10px; }
   .hero-text { font-size: 16px; line-height: 1.5; color: var(--muted); margin: 0 0 18px; }
 
   .primary-button,
@@ -99,9 +104,9 @@
     width: 100%;
     min-height: 44px;
     border-radius: 14px;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 800;
-    padding: 7px 7px;
+    padding: 10px 10px;
     border: 1px solid rgba(255, 255, 255, 0.14);
     box-shadow: 0 6px 16px rgba(31, 29, 25, 0.04);
     white-space: nowrap;
@@ -260,6 +265,12 @@
     background: var(--accent-soft);
     color: var(--accent);
     font-weight: 700;
+  }
+
+  .trip-detail-hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 10px;
   }
 
   .modal,
@@ -566,7 +577,7 @@
     <section class="hero-card">
       <div class="hero-label">좋았던 날은 오래 남기고 싶어서</div>
       <h2 class="hero-title">그날의 바람과 분위기를<br>천천히 다시 꺼내봅니다.</h2>
-      <p class="hero-text">기억은 흐릿해져도, 기록은 그대로입니다.</p>
+      <p class="hero-text">짧게 남긴 감상과 일정한 기록이, 그날의 공기까지 다시 떠올리게 해줍니다.</p>
       <button type="button" class="primary-button" id="openModalButton">이번 기억 남기기</button>
     </section>
 
@@ -983,22 +994,15 @@
   function buildRecordCard(record, animate) {
     var html = '';
     html += '<article class="trip-card' + (animate ? ' card-enter' : '') + '" data-id="' + record.id + '">';
-
-    html += '<div class="trip-summary-row">';
     html += '<h4 class="trip-mood">' + escapeHtml(record.mood || '이름 없는 하루') + '</h4>';
-    html += '<div class="meta-chip weather-chip">' + escapeHtml(record.weather || '맑고 선선했어') + '</div>';
-    html += '</div>';
-
     html += '<p class="trip-note">' + escapeHtml(record.note || '짧은 감상이 아직 없습니다.') + '</p>';
-
     if (record.photo) html += '<img src="' + record.photo + '" class="trip-photo" alt="캠핑 기록 사진">';
-
     html += '<div class="trip-summary-row">';
     html += '<div class="meta-chip">' + escapeHtml(record.date || '') + '</div>';
     html += '<div class="meta-chip">' + escapeHtml(record.place || '이름 없는 캠핑장') + '</div>';
-    html += '<div class="meta-chip">' + escapeHtml(record.stay || '') + '</div>';
+    html += '<div class="meta-chip weather-chip">' + escapeHtml(record.weather || '맑고 선선했어') + '</div>';
     html += '</div>';
-
+    html += '<div class="trip-detail-hint">눌러서 그날의 기억을 더 자세히 봅니다.</div>';
     html += '</article>';
     return html;
   }
