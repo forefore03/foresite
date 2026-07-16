@@ -311,13 +311,14 @@
   .season-toggle {
     width: 100%;
     min-height: 58px;
-    padding: 16px 16px;
+    padding: 16px 18px;
     background: transparent;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 12px;
     text-align: left;
+    background: #ece7de;
   }
 
   .season-toggle:active {
@@ -1266,7 +1267,6 @@
       +       '</span>'
       +       '<span class="season-meta">가장 최근 ' + escapeHtml(recentDate) + '</span>'
       +     '</span>'
-      +     buildSeasonChevron()
       +   '</button>'
       +   '<div class="season-panel' + (isOpen ? ' open' : '') + '" data-role="season-panel">'
       +     '<div class="season-cards">'
