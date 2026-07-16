@@ -1573,9 +1573,9 @@
   });
 
   detailSheet.addEventListener('click', function (event) {
-  event.stopPropagation();
+    event.stopPropagation();
   });
-  
+
   latestRecord.addEventListener('click', function (e) {
     var card = e.target.closest('.trip-card');
     if (!card) return;
@@ -1629,26 +1629,37 @@
   detailEditButton.addEventListener('click', function (event) {
     event.preventDefault();
     event.stopPropagation();
+
     if (currentDetailId == null) return;
+
+    var targetId = currentDetailId;
     closeDetailView();
-    openEditMode(currentDetailId);
+
+    setTimeout(function () {
+      openEditMode(targetId);
+    }, 30);
   });
 
   detailDeleteButton.addEventListener('click', async function (event) {
-  event.preventDefault();
-  event.stopPropagation();
-  if (currentDetailId == null) return;
-  var targetId = currentDetailId;
+    event.preventDefault();
+    event.stopPropagation();
 
-  try {
-    await deleteRecord(targetId);
-    closeDetailView();
-    await renderRecords();
-    showToast('기억을 조용히 덜어냈습니다.');
-  } catch (error) {
-    console.error(error);
-  }
-});
+    if (currentDetailId == null) return;
+
+    var confirmed = window.confirm('정말 삭제하시겠습니까?');
+    if (!confirmed) return;
+
+    var targetId = currentDetailId;
+
+    try {
+      await deleteRecord(targetId);
+      closeDetailView();
+      await renderRecords();
+      showToast('기억을 삭제했습니다.');
+    } catch (error) {
+      console.error(error);
+    }
+  });
 
   photoInput.addEventListener('change', function () {
     var files = Array.prototype.slice.call(photoInput.files || []).slice(0, 3);
