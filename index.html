@@ -25,22 +25,12 @@
     --white: #ffffff;
     --shadow: 0 10px 30px rgba(31, 29, 25, 0.08);
     --shadow-strong: 0 14px 36px rgba(31, 29, 25, 0.16);
-
     --backup-purple: #d2c8e5;
     --backup-purple-hover: #c8bde0;
     --backup-purple-text: #ffffff;
     --backup-blue: #d0dced;
     --backup-blue-hover: #c4d4e7;
     --backup-blue-text: #ffffff;
-
-    --spring-soft: #edf4e8;
-    --spring-line: #d8e5cf;
-    --summer-soft: #e8f2ec;
-    --summer-line: #cfe0d6;
-    --autumn-soft: #f5eee3;
-    --autumn-line: #e5d5bd;
-    --winter-soft: #eef1f6;
-    --winter-line: #d6dce8;
   }
 
   * { box-sizing: border-box; }
@@ -68,8 +58,7 @@
   .modal-sheet,
   .search-card,
   .detail-sheet,
-  .backup-card,
-  .season-block {
+  .backup-card {
     background: var(--card);
     border: 1px solid rgba(217, 212, 202, 0.8);
     box-shadow: var(--shadow);
@@ -86,8 +75,7 @@
   .delete-button,
   .edit-button,
   .detail-back-button,
-  .secondary-button,
-  .season-toggle {
+  .secondary-button {
     border: none;
     cursor: pointer;
     font-family: inherit;
@@ -118,9 +106,7 @@
     white-space: nowrap;
   }
 
-  .secondary-button:active {
-    transform: scale(0.99);
-  }
+  .secondary-button:active { transform: scale(0.99); }
 
   .backup-card {
     border-radius: 18px;
@@ -150,15 +136,8 @@
     align-items: stretch;
   }
 
-  .backup-export-button {
-    background: var(--backup-purple);
-    color: var(--backup-purple-text);
-  }
-
-  .backup-export-button:hover {
-    background: var(--backup-purple-hover);
-  }
-
+  .backup-export-button { background: var(--backup-purple); color: var(--backup-purple-text); }
+  .backup-export-button:hover { background: var(--backup-purple-hover); }
   .backup-import-button {
     background: var(--backup-blue);
     color: var(--backup-blue-text);
@@ -166,10 +145,7 @@
     padding-left: 8px;
     padding-right: 8px;
   }
-
-  .backup-import-button:hover {
-    background: var(--backup-blue-hover);
-  }
+  .backup-import-button:hover { background: var(--backup-blue-hover); }
 
   .section { margin-top: 26px; }
 
@@ -217,12 +193,8 @@
     background: #eef4ee;
     border-radius: 18px;
     padding: 14px;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
     cursor: pointer;
-  }
-
-  .trip-card:last-child {
-    margin-bottom: 0;
   }
 
   .trip-card:active { transform: scale(0.995); }
@@ -277,127 +249,6 @@
     font-weight: 700;
   }
 
-  .season-accordion {
-    display: grid;
-    gap: 10px;
-  }
-
-  .season-block {
-    border-radius: 20px;
-    overflow: hidden;
-    background: #f7f4ee;
-  }
-
-  .season-block.season-spring {
-    background: var(--spring-soft);
-    border-color: var(--spring-line);
-  }
-
-  .season-block.season-summer {
-    background: var(--summer-soft);
-    border-color: var(--summer-line);
-  }
-
-  .season-block.season-autumn {
-    background: var(--autumn-soft);
-    border-color: var(--autumn-line);
-  }
-
-  .season-block.season-winter {
-    background: var(--winter-soft);
-    border-color: var(--winter-line);
-  }
-
-  .season-toggle {
-    width: 100%;
-    min-height: 58px;
-    padding: 16px 18px;
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 12px;
-    text-align: left;
-    background: #ece7de;
-  }
-
-  .season-toggle:active {
-    transform: scale(0.997);
-  }
-
-  .season-toggle-main {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    min-width: 0;
-  }
-
-  .season-title-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  .season-label {
-    font-size: 18px;
-    line-height: 1.2;
-    font-weight: 800;
-    color: var(--text);
-    letter-spacing: -0.25px;
-  }
-
-  .season-count-chip {
-    display: inline-flex;
-    align-items: center;
-    height: 22px;
-    padding: 0 8px;
-    border-radius: 999px;
-    background: rgba(255,255,255,0.58);
-    color: var(--text-soft);
-    font-size: 11px;
-    font-weight: 700;
-  }
-
-  .season-meta {
-    font-size: 12px;
-    line-height: 1.35;
-    color: var(--muted);
-  }
-
-  .accordion-chevron {
-    flex-shrink: 0;
-    width: 24px;
-    height: 24px;
-    border-radius: 999px;
-    background: rgba(255,255,255,0.62);
-    color: var(--text-soft);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    transition: transform 0.2s ease, background-color 0.18s ease;
-  }
-
-  .season-toggle[aria-expanded="true"] .accordion-chevron {
-    transform: rotate(180deg);
-    background: rgba(255,255,255,0.9);
-  }
-
-  .season-panel {
-    display: none;
-    padding: 0 12px 12px;
-  }
-
-  .season-panel.open {
-    display: block;
-  }
-
-  .season-cards {
-    display: grid;
-    gap: 12px;
-  }
-
   .modal,
   .detail-modal {
     position: fixed;
@@ -410,9 +261,7 @@
   }
 
   .modal.show,
-  .detail-modal.show {
-    display: flex;
-  }
+  .detail-modal.show { display: flex; }
 
   .modal-sheet,
   .detail-sheet {
@@ -480,17 +329,20 @@
     margin: 0 0 18px;
   }
 
+  .detail-photo-gallery {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
   .detail-photo {
     width: 100%;
     max-height: 320px;
     object-fit: cover;
     border-radius: 22px;
-    margin-bottom: 20px;
     border: 1px solid rgba(217, 212, 202, 0.8);
-    display: none;
+    display: block;
   }
-
-  .detail-photo.show { display: block; }
 
   .detail-empty-photo {
     display: none;
@@ -630,13 +482,27 @@
   .helper-text { color: var(--muted); }
   .status-text { color: var(--accent); }
 
-  .photo-preview {
-    width: 100%;
-    max-height: 220px;
-    border-radius: 18px;
+  .photo-preview-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
     margin-top: 12px;
+  }
+
+  .photo-preview-item {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 18px;
+    overflow: hidden;
     border: 1px solid rgba(217, 212, 202, 0.8);
+    background: #f3efe8;
+  }
+
+  .photo-preview-item img {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
+    display: block;
   }
 
   .save-placeholder {
@@ -685,10 +551,71 @@
 
   .hidden-input { display: none; }
 
+  .season-accordion {
+    display: grid;
+    gap: 12px;
+  }
+
+  .season-block {
+    background: #f3efe8;
+    border: 1px solid rgba(217, 212, 202, 0.8);
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .season-toggle {
+    width: 100%;
+    min-height: 58px;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    border: none;
+    background: #ece7de;
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .season-toggle-label-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .season-toggle-label {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    color: var(--text);
+  }
+
+  .season-toggle-meta {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .season-panel {
+    display: none;
+    padding: 12px;
+    background: #f7f4ee;
+  }
+
+  .season-panel.open {
+    display: block;
+  }
+
+  .season-cards {
+    display: grid;
+    gap: 12px;
+  }
+
+  .season-cards .trip-card { margin-bottom: 0; }
+
   @media (max-width: 360px) {
-    .backup-actions {
-      grid-template-columns: 1fr;
-    }
+    .backup-actions { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -806,10 +733,10 @@
 
       <div class="field">
         <label class="field-label" for="photoInput">사진 첨부</label>
-        <input type="file" id="photoInput" accept="image/*" class="file-input">
-        <div class="helper-text">원본 대신 큰 썸네일용으로 자동 축소 저장합니다.</div>
+        <input type="file" id="photoInput" accept="image/*" multiple class="file-input">
+        <div class="helper-text">최대 3장까지 선택할 수 있으며, 원본 대신 앱용 썸네일로 자동 축소 저장합니다.</div>
         <div class="status-text" id="photoStatus"></div>
-        <img id="photoPreview" class="photo-preview" alt="선택한 사진 미리보기" style="display:none;">
+        <div id="photoPreviewList" class="photo-preview-list"></div>
       </div>
 
       <button type="button" class="primary-button" id="saveRecordButton">이 기억 저장하기</button>
@@ -826,7 +753,7 @@
       </div>
       <h2 class="detail-mood" id="detailMood">고요함</h2>
       <p class="detail-note" id="detailNote">짧은 감상</p>
-      <img id="detailPhoto" class="detail-photo" alt="캠핑 기록 상세 사진">
+      <div id="detailPhotoGallery" class="detail-photo-gallery"></div>
       <div id="detailEmptyPhoto" class="detail-empty-photo">남겨둔 사진은 없지만, 그날의 분위기는 감상과 기록 안에 남아 있습니다.</div>
       <div class="detail-info-block" id="detailInfoBlock"></div>
       <div class="detail-action-row">
@@ -836,7 +763,7 @@
     </div>
   </div>
 
-  <script>
+<script>
   var dbPromise = null;
 
   function openDatabase() {
@@ -883,14 +810,14 @@
   var placeInput = document.getElementById('placeInput');
   var noteInput = document.getElementById('noteInput');
   var photoInput = document.getElementById('photoInput');
-  var photoPreview = document.getElementById('photoPreview');
+  var photoPreviewList = document.getElementById('photoPreviewList');
   var photoStatus = document.getElementById('photoStatus');
   var detailModal = document.getElementById('detailModal');
   var detailSheet = document.getElementById('detailSheet');
   var closeDetailButton = document.getElementById('closeDetailButton');
   var detailMood = document.getElementById('detailMood');
   var detailNote = document.getElementById('detailNote');
-  var detailPhoto = document.getElementById('detailPhoto');
+  var detailPhotoGallery = document.getElementById('detailPhotoGallery');
   var detailEmptyPhoto = document.getElementById('detailEmptyPhoto');
   var detailInfoBlock = document.getElementById('detailInfoBlock');
   var detailEditButton = document.getElementById('detailEditButton');
@@ -901,8 +828,7 @@
 
   var editingRecordId = null;
   var currentDetailId = null;
-  var currentPhotoData = '';
-  var currentPhotoBlob = null;
+  var currentPhotos = [];
   var currentSearchTerm = '';
   var toastMessage = document.getElementById('toastMessage');
   var toastTimer = null;
@@ -929,100 +855,6 @@
     var parts = displayValue.split('.');
     if (parts.length !== 3) return getTodayValue();
     return parts[0] + '-' + parts[1] + '-' + parts[2];
-  }
-
-  function parseRecordDateParts(dateValue) {
-    if (!dateValue) return { year: '', month: '', day: '' };
-
-    var normalized = String(dateValue).trim();
-
-    if (normalized.indexOf('-') > -1) {
-      var dashParts = normalized.split('-');
-      return {
-        year: dashParts[0] || '',
-        month: dashParts[1] || '',
-        day: dashParts[2] || ''
-      };
-    }
-
-    if (normalized.indexOf('.') > -1) {
-      var dotParts = normalized.split('.');
-      return {
-        year: dotParts[0] || '',
-        month: dotParts[1] || '',
-        day: dotParts[2] || ''
-      };
-    }
-
-    return { year: '', month: '', day: '' };
-  }
-
-  function getSeasonByMonth(monthValue) {
-    var month = Number(monthValue);
-    if (month === 3 || month === 4 || month === 5) return '봄';
-    if (month === 6 || month === 7 || month === 8) return '여름';
-    if (month === 9 || month === 10 || month === 11) return '가을';
-    return '겨울';
-  }
-
-  function getSeasonClassName(season) {
-    if (season === '봄') return 'season-spring';
-    if (season === '여름') return 'season-summer';
-    if (season === '가을') return 'season-autumn';
-    return 'season-winter';
-  }
-
-  function getSeasonKey(record) {
-    var parsed = parseRecordDateParts(record.date || '');
-    var year = parsed.year || '기타';
-    var season = getSeasonByMonth(parsed.month || '1');
-    return year + '-' + season;
-  }
-
-  function getSeasonLabelFromRecord(record) {
-    var parsed = parseRecordDateParts(record.date || '');
-    var year = parsed.year || '기타';
-    var season = getSeasonByMonth(parsed.month || '1');
-    return year + ' ' + season;
-  }
-
-  function getSeasonSortValue(seasonKey) {
-    var parts = String(seasonKey).split('-');
-    var year = Number(parts[0]) || 0;
-    var season = parts[1] || '';
-    var seasonOrder = {
-      '봄': 1,
-      '여름': 2,
-      '가을': 3,
-      '겨울': 4
-    };
-    return year * 10 + (seasonOrder[season] || 0);
-  }
-
-  function getLatestSeasonKey(records) {
-    if (!Array.isArray(records) || records.length === 0) return '';
-    return getSeasonKey(records[0]);
-  }
-
-  function groupRecordsBySeason(records) {
-    var grouped = {};
-
-    records.forEach(function (record) {
-      var seasonKey = getSeasonKey(record);
-
-      if (!grouped[seasonKey]) {
-        grouped[seasonKey] = {
-          key: seasonKey,
-          label: getSeasonLabelFromRecord(record),
-          season: getSeasonByMonth(parseRecordDateParts(record.date || '').month || '1'),
-          records: []
-        };
-      }
-
-      grouped[seasonKey].records.push(record);
-    });
-
-    return grouped;
   }
 
   function getActiveValue(groupId) {
@@ -1206,234 +1038,8 @@
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
-      .replace(/\"/g, '&quot;')
+      .replace(/"/g, '&quot;')
       .replace(/'/g, '&#039;');
-  }
-
-  function buildRecordCard(record, animate) {
-    var html = '';
-    html += '<article class="trip-card' + (animate ? ' card-enter' : '') + '" data-id="' + record.id + '">';
-
-    html += '<div class="trip-summary-row">';
-    html += '<h4 class="trip-mood">' + escapeHtml(record.mood || '이름 없는 하루') + '</h4>';
-    html += '<div class="meta-chip weather-chip">' + escapeHtml(record.weather || '맑고 선선했어') + '</div>';
-    html += '</div>';
-
-    html += '<p class="trip-note">' + escapeHtml(record.note || '짧은 감상이 아직 없습니다.') + '</p>';
-
-    if (record.photo) html += '<img src="' + record.photo + '" class="trip-photo" alt="캠핑 기록 사진">';
-
-    html += '<div class="trip-summary-row">';
-    html += '<div class="meta-chip">' + escapeHtml(record.date || '') + '</div>';
-    html += '<div class="meta-chip">' + escapeHtml(record.place || '이름 없는 캠핑장') + '</div>';
-    html += '<div class="meta-chip">' + escapeHtml(record.stay || '') + '</div>';
-    html += '</div>';
-
-    html += '</article>';
-    return html;
-  }
-
-  function buildSeasonChevron() {
-    return '<span class="accordion-chevron" aria-hidden="true">⌄</span>';
-  }
-
-  function renderSeasonGroupedRecords(records) {
-  if (!Array.isArray(records) || records.length === 0) {
-    return '<div class="empty-state">아직 지난 기억들은 없습니다. 다음 기록부터 이 아래에 차곡차곡 쌓입니다.</div>';
-  }
-
-  var grouped = groupRecordsBySeason(records);
-  var seasonKeys = Object.keys(grouped).sort(function (a, b) {
-    return getSeasonSortValue(b) - getSeasonSortValue(a);
-  });
-  var latestSeasonKey = getLatestSeasonKey(records);
-
-  return '<div class="season-accordion">' + seasonKeys.map(function (seasonKey) {
-    var group = grouped[seasonKey];
-    var isOpen = seasonKey === latestSeasonKey;
-    var recentDate = group.records[0] ? group.records[0].date : '';
-    var seasonClass = getSeasonClassName(group.season);
-    var cardsHtml = group.records.map(function (record) {
-      return buildRecordCard(record, false);
-    }).join('');
-
-    return ''
-      + '<section class="season-block ' + seasonClass + '" data-season-key="' + escapeHtml(seasonKey) + '">'
-      +   '<button type="button" class="season-toggle" data-role="season-toggle" data-season-key="' + escapeHtml(seasonKey) + '" aria-expanded="' + (isOpen ? 'true' : 'false') + '">'
-      +     '<span class="season-toggle-main">'
-      +       '<span class="season-title-row">'
-      +         '<span class="season-label">' + escapeHtml(group.label) + '</span>'
-      +         '<span class="season-count-chip">' + group.records.length + '건</span>'
-      +       '</span>'
-      +       '<span class="season-meta">가장 최근 ' + escapeHtml(recentDate) + '</span>'
-      +     '</span>'
-      +   '</button>'
-      +   '<div class="season-panel' + (isOpen ? ' open' : '') + '" data-role="season-panel">'
-      +     '<div class="season-cards">'
-      +       cardsHtml
-      +     '</div>'
-      +   '</div>'
-      + '</section>';
-  }).join('') + '</div>';
-}
-
-  async function renderRecords() {
-    try {
-      var records = await getRecords();
-    } catch (error) {
-      console.error('getRecords 오류:', error);
-      latestRecord.innerHTML = '';
-      searchResultText.textContent = '전체 기록 0건';
-      recordsList.innerHTML = '<div class="empty-state">아직 남겨둔 기억이 없습니다. 첫 캠핑의 분위기부터 천천히 담아보세요.</div>';
-      return;
-    }
-
-    if (!Array.isArray(records) || records.length === 0) {
-      latestRecord.innerHTML = '';
-      searchResultText.textContent = '전체 기록 0건';
-      recordsList.innerHTML = '<div class="empty-state">아직 남겨둔 기억이 없습니다. 첫 캠핑의 분위기부터 천천히 담아보세요.</div>';
-      return;
-    }
-
-    var latest = records[0];
-    latestRecord.innerHTML = buildRecordCard(latest, shouldAnimateLatestCard);
-    shouldAnimateLatestCard = false;
-
-    var remainingRecords = records.slice(1);
-    var filteredRemainingRecords = getFilteredRecords(remainingRecords, currentSearchTerm);
-
-    searchResultText.textContent = currentSearchTerm.trim()
-      ? '지난 기억들 검색 결과 ' + filteredRemainingRecords.length + '건'
-      : '지난 기억들 ' + remainingRecords.length + '건';
-
-    if (remainingRecords.length === 0) {
-      recordsList.innerHTML = '<div class="empty-state">아직 지난 기억들은 없습니다. 다음 기록부터 이 아래에 차곡차곡 쌓입니다.</div>';
-      return;
-    }
-
-    if (currentSearchTerm.trim() && filteredRemainingRecords.length === 0) {
-      recordsList.innerHTML = '<div class="empty-state">이번에는 찾는 기억이 보이지 않습니다. 분위기나 장소를 다르게 떠올려보세요.</div>';
-      return;
-    }
-
-    recordsList.innerHTML = renderSeasonGroupedRecords(filteredRemainingRecords);
-  }
-
-  function setDefaultChoice(groupId, value) {
-    var group = document.getElementById(groupId);
-    var buttons = group.querySelectorAll('.choice-button');
-    buttons.forEach(function (button) {
-      button.classList.toggle('active', button.getAttribute('data-value') === value);
-    });
-  }
-
-  function resetForm() {
-    editingRecordId = null;
-    currentPhotoData = '';
-    currentPhotoBlob = null;
-    modalTitle.textContent = '이번 기억 남기기';
-    saveRecordButton.textContent = '이 기억 저장하기';
-    saveRecordButton.disabled = false;
-    moodInput.value = '';
-    dateInput.value = getTodayValue();
-    placeInput.value = '';
-    noteInput.value = '';
-    photoInput.value = '';
-    photoPreview.style.display = 'none';
-    photoPreview.removeAttribute('src');
-    photoStatus.textContent = '';
-    setDefaultChoice('stayGroup', '1박');
-    setDefaultChoice('styleGroup', '솔로');
-    setDefaultChoice('groundGroup', '파쇄석');
-    setDefaultChoice('weatherGroup', '맑고 선선했어');
-  }
-
-  function openCreateMode() {
-    resetForm();
-    recordModal.classList.add('show');
-  }
-
-  async function openEditMode(recordId) {
-    try {
-      var record = await findRecordById(recordId);
-      if (!record) return;
-
-      editingRecordId = record.id;
-      currentPhotoData = isRestorablePhoto(record.photo) ? record.photo : '';
-      currentPhotoBlob = null;
-      modalTitle.textContent = '기억 수정하기';
-      saveRecordButton.textContent = '수정한 내용 저장하기';
-      saveRecordButton.disabled = false;
-      moodInput.value = record.mood || '';
-      dateInput.value = formatDateInput(record.date);
-      placeInput.value = record.place || '';
-      noteInput.value = record.note || '';
-      photoInput.value = '';
-
-      setDefaultChoice('stayGroup', record.stay || '1박');
-      setDefaultChoice('styleGroup', record.style || '솔로');
-      setDefaultChoice('groundGroup', record.ground || '파쇄석');
-      setDefaultChoice('weatherGroup', record.weather || '맑고 선선했어');
-
-      if (currentPhotoData) {
-        photoPreview.src = currentPhotoData;
-        photoPreview.style.display = 'block';
-        photoStatus.textContent = '기존 사진이 유지됩니다. 새 사진을 고르면 교체됩니다.';
-      } else {
-        photoPreview.style.display = 'none';
-        photoPreview.removeAttribute('src');
-        photoStatus.textContent = '사진이 없습니다. 새 사진을 추가할 수 있습니다.';
-      }
-
-      recordModal.classList.add('show');
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  function buildDetailInfoRow(label, value) {
-    return '<div class="detail-info-row"><div class="detail-info-label">' + escapeHtml(label) + '</div><div class="detail-info-value">' + escapeHtml(value) + '</div></div>';
-  }
-
-  async function openDetailView(recordId) {
-    try {
-      var record = await findRecordById(recordId);
-      if (!record) return;
-
-      currentDetailId = record.id;
-      detailMood.textContent = record.mood || '이름 없는 하루';
-      detailNote.textContent = record.note || '짧은 감상이 아직 없습니다.';
-      detailInfoBlock.innerHTML = ''
-        + buildDetailInfoRow('다녀온 날짜', record.date || '')
-        + buildDetailInfoRow('캠핑장', record.place || '기록되지 않음')
-        + buildDetailInfoRow('머문 시간', record.stay || '')
-        + buildDetailInfoRow('함께한 형태', record.style || '')
-        + buildDetailInfoRow('바닥 느낌', record.ground || '')
-        + buildDetailInfoRow('그날의 날씨', record.weather || '맑고 선선했어');
-
-      if (isRestorablePhoto(record.photo)) {
-        detailPhoto.src = record.photo;
-        detailPhoto.classList.add('show');
-        detailEmptyPhoto.classList.remove('show');
-      } else {
-        detailPhoto.removeAttribute('src');
-        detailPhoto.classList.remove('show');
-        detailEmptyPhoto.classList.add('show');
-      }
-
-      detailModal.classList.add('show');
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  function closeDetailView() {
-    detailModal.classList.remove('show');
-    currentDetailId = null;
-  }
-
-  function bytesToMB(bytes) {
-    return (bytes / (1024 * 1024)).toFixed(1);
   }
 
   function createCanvas(width, height) {
@@ -1503,9 +1109,35 @@
     return typeof photoValue === 'string' && photoValue.indexOf('data:image/') === 0;
   }
 
-  function sanitizeRecordPhoto(photoValue) {
-    if (isRestorablePhoto(photoValue)) return photoValue;
-    return '';
+  function sanitizeRecordPhotos(photoValues) {
+    if (!Array.isArray(photoValues)) return [];
+    return photoValues.filter(function (item) {
+      return isRestorablePhoto(item);
+    }).slice(0, 3);
+  }
+
+  function getRecordPhotos(record) {
+    if (Array.isArray(record.photos) && record.photos.length) {
+      return sanitizeRecordPhotos(record.photos);
+    }
+    if (isRestorablePhoto(record.photo)) {
+      return [record.photo];
+    }
+    return [];
+  }
+
+  function renderPhotoPreviewList(photos) {
+    if (!Array.isArray(photos) || photos.length === 0) {
+      photoPreviewList.innerHTML = '';
+      return;
+    }
+
+    photoPreviewList.innerHTML = photos.map(function (src, index) {
+      return ''
+        + '<div class="photo-preview-item">'
+        +   '<img src="' + src + '" alt="선택한 사진 미리보기 ' + (index + 1) + '">'
+        + '</div>';
+    }).join('');
   }
 
   function normalizeImportedRecord(raw, fallbackIndex) {
@@ -1524,6 +1156,13 @@
       rawDate = formatDateDisplay(getTodayValue());
     }
 
+    var normalizedPhotos = [];
+    if (Array.isArray(raw.photos)) {
+      normalizedPhotos = sanitizeRecordPhotos(raw.photos);
+    } else if (isRestorablePhoto(raw.photo)) {
+      normalizedPhotos = [raw.photo];
+    }
+
     return {
       id: Number(raw.id) || now,
       mood: String(raw.mood || '').trim() || '이름 없는 하루',
@@ -1534,14 +1173,283 @@
       ground: String(raw.ground || '').trim() || '파쇄석',
       weather: String(raw.weather || '').trim() || '맑고 선선했어',
       note: String(raw.note || '').trim() || '짧은 감상이 아직 없습니다.',
-      photo: sanitizeRecordPhoto(raw.photo),
+      photo: normalizedPhotos[0] || '',
+      photos: normalizedPhotos,
       createdAt: Number(raw.createdAt) || now,
       updatedAt: Number(raw.updatedAt) || now
     };
   }
 
+  function buildRecordCard(record, animate) {
+    var recordPhotos = getRecordPhotos(record);
+    var html = '';
+    html += '<article class="trip-card' + (animate ? ' card-enter' : '') + '" data-id="' + record.id + '">';
+
+    html += '<div class="trip-summary-row">';
+    html += '<h4 class="trip-mood">' + escapeHtml(record.mood || '이름 없는 하루') + '</h4>';
+    html += '<div class="meta-chip weather-chip">' + escapeHtml(record.weather || '맑고 선선했어') + '</div>';
+    html += '</div>';
+
+    html += '<p class="trip-note">' + escapeHtml(record.note || '짧은 감상이 아직 없습니다.') + '</p>';
+
+    if (recordPhotos[0]) {
+      html += '<img src="' + recordPhotos[0] + '" class="trip-photo" alt="캠핑 기록 사진">';
+    }
+
+    html += '<div class="trip-summary-row">';
+    html += '<div class="meta-chip">' + escapeHtml(record.date || '') + '</div>';
+    html += '<div class="meta-chip">' + escapeHtml(record.place || '이름 없는 캠핑장') + '</div>';
+    html += '<div class="meta-chip">' + escapeHtml(record.stay || '') + '</div>';
+    html += '</div>';
+
+    html += '</article>';
+    return html;
+  }
+
+  function parseRecordMonth(dateValue) {
+    if (!dateValue) return 1;
+
+    var normalized = String(dateValue).trim();
+
+    if (normalized.indexOf('-') > -1) {
+      var dashParts = normalized.split('-');
+      return Number(dashParts[1] || 1);
+    }
+
+    if (normalized.indexOf('.') > -1) {
+      var dotParts = normalized.split('.');
+      return Number(dotParts[1] || 1);
+    }
+
+    return 1;
+  }
+
+  function getSeasonByKoreanMonth(monthValue) {
+    var month = Number(monthValue);
+    if (month === 3 || month === 4 || month === 5) return '봄';
+    if (month === 6 || month === 7 || month === 8) return '여름';
+    if (month === 9 || month === 10 || month === 11) return '가을';
+    return '겨울';
+  }
+
+  function groupRecordsBySeason(records) {
+    var grouped = {
+      '봄': [],
+      '여름': [],
+      '가을': [],
+      '겨울': []
+    };
+
+    records.forEach(function (record) {
+      var month = parseRecordMonth(record.date || '');
+      var season = getSeasonByKoreanMonth(month);
+      grouped[season].push(record);
+    });
+
+    return grouped;
+  }
+
+  function getLatestSeason(records) {
+    if (!Array.isArray(records) || records.length === 0) return '';
+    return getSeasonByKoreanMonth(parseRecordMonth(records[0].date || ''));
+  }
+
+  function renderGroupedRecords(records) {
+    if (!Array.isArray(records) || records.length === 0) {
+      return '<div class="empty-state">아직 지난 기억들은 없습니다. 다음 기록부터 이 아래에 차곡차곡 쌓입니다.</div>';
+    }
+
+    var grouped = groupRecordsBySeason(records);
+    var latestSeason = getLatestSeason(records);
+    var orderedSeasons = ['봄', '여름', '가을', '겨울'];
+
+    var visibleSeasons = orderedSeasons.filter(function (season) {
+      return grouped[season] && grouped[season].length > 0;
+    });
+
+    visibleSeasons.sort(function (a, b) {
+      if (a === latestSeason) return -1;
+      if (b === latestSeason) return 1;
+
+      var aLatestDate = grouped[a][0] ? String(grouped[a][0].date || '') : '';
+      var bLatestDate = grouped[b][0] ? String(grouped[b][0].date || '') : '';
+      return bLatestDate.localeCompare(aLatestDate);
+    });
+
+    return '<div class="season-accordion">' + visibleSeasons.map(function (season) {
+      var seasonRecords = grouped[season];
+      var isOpen = season === latestSeason;
+
+      return ''
+        + '<section class="season-block" data-season="' + escapeHtml(season) + '">'
+        +   '<button type="button" class="season-toggle" data-role="season-toggle" data-season="' + escapeHtml(season) + '" aria-expanded="' + (isOpen ? 'true' : 'false') + '">'
+        +     '<span class="season-toggle-label-wrap">'
+        +       '<span class="season-toggle-label">' + escapeHtml(season) + '</span>'
+        +       '<span class="season-toggle-meta">기록 ' + seasonRecords.length + '건</span>'
+        +     '</span>'
+        +   '</button>'
+        +   '<div class="season-panel' + (isOpen ? ' open' : '') + '" data-role="season-panel">'
+        +     '<div class="season-cards">'
+        +       seasonRecords.map(function (record) {
+                  return buildRecordCard(record, false);
+                }).join('')
+        +     '</div>'
+        +   '</div>'
+        + '</section>';
+    }).join('') + '</div>';
+  }
+
+  async function renderRecords() {
+    try {
+      var records = await getRecords();
+    } catch (error) {
+      console.error('getRecords 오류:', error);
+      latestRecord.innerHTML = '';
+      searchResultText.textContent = '전체 기록 0건';
+      recordsList.innerHTML = '<div class="empty-state">아직 남겨둔 기억이 없습니다. 첫 캠핑의 분위기부터 천천히 담아보세요.</div>';
+      return;
+    }
+
+    if (!Array.isArray(records) || records.length === 0) {
+      latestRecord.innerHTML = '';
+      searchResultText.textContent = '전체 기록 0건';
+      recordsList.innerHTML = '<div class="empty-state">아직 남겨둔 기억이 없습니다. 첫 캠핑의 분위기부터 천천히 담아보세요.</div>';
+      return;
+    }
+
+    var latest = records[0];
+    latestRecord.innerHTML = buildRecordCard(latest, shouldAnimateLatestCard);
+    shouldAnimateLatestCard = false;
+
+    var remainingRecords = records.slice(1);
+    var filteredRemainingRecords = getFilteredRecords(remainingRecords, currentSearchTerm);
+
+    searchResultText.textContent = currentSearchTerm.trim()
+      ? '지난 기억들 검색 결과 ' + filteredRemainingRecords.length + '건'
+      : '지난 기억들 ' + remainingRecords.length + '건';
+
+    if (remainingRecords.length === 0) {
+      recordsList.innerHTML = '<div class="empty-state">아직 지난 기억들은 없습니다. 다음 기록부터 이 아래에 차곡차곡 쌓입니다.</div>';
+      return;
+    }
+
+    if (currentSearchTerm.trim() && filteredRemainingRecords.length === 0) {
+      recordsList.innerHTML = '<div class="empty-state">이번에는 찾는 기억이 보이지 않습니다. 분위기나 장소를 다르게 떠올려보세요.</div>';
+      return;
+    }
+
+    recordsList.innerHTML = renderGroupedRecords(filteredRemainingRecords);
+  }
+
+  function setDefaultChoice(groupId, value) {
+    var group = document.getElementById(groupId);
+    var buttons = group.querySelectorAll('.choice-button');
+    buttons.forEach(function (button) {
+      button.classList.toggle('active', button.getAttribute('data-value') === value);
+    });
+  }
+
+  function resetForm() {
+    editingRecordId = null;
+    currentPhotos = [];
+    modalTitle.textContent = '이번 기억 남기기';
+    saveRecordButton.textContent = '이 기억 저장하기';
+    saveRecordButton.disabled = false;
+    moodInput.value = '';
+    dateInput.value = getTodayValue();
+    placeInput.value = '';
+    noteInput.value = '';
+    photoInput.value = '';
+    photoPreviewList.innerHTML = '';
+    photoStatus.textContent = '';
+    setDefaultChoice('stayGroup', '1박');
+    setDefaultChoice('styleGroup', '솔로');
+    setDefaultChoice('groundGroup', '파쇄석');
+    setDefaultChoice('weatherGroup', '맑고 선선했어');
+  }
+
+  function openCreateMode() {
+    resetForm();
+    recordModal.classList.add('show');
+  }
+
+  async function openEditMode(recordId) {
+    try {
+      var record = await findRecordById(recordId);
+      if (!record) return;
+
+      editingRecordId = record.id;
+      currentPhotos = getRecordPhotos(record);
+      modalTitle.textContent = '기억 수정하기';
+      saveRecordButton.textContent = '수정한 내용 저장하기';
+      saveRecordButton.disabled = false;
+      moodInput.value = record.mood || '';
+      dateInput.value = formatDateInput(record.date);
+      placeInput.value = record.place || '';
+      noteInput.value = record.note || '';
+      photoInput.value = '';
+
+      setDefaultChoice('stayGroup', record.stay || '1박');
+      setDefaultChoice('styleGroup', record.style || '솔로');
+      setDefaultChoice('groundGroup', record.ground || '파쇄석');
+      setDefaultChoice('weatherGroup', record.weather || '맑고 선선했어');
+
+      renderPhotoPreviewList(currentPhotos);
+      photoStatus.textContent = currentPhotos.length
+        ? '기존 사진이 유지됩니다. 새 사진을 고르면 교체됩니다.'
+        : '사진이 없습니다. 새 사진을 추가할 수 있습니다.';
+
+      recordModal.classList.add('show');
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  function buildDetailInfoRow(label, value) {
+    return '<div class="detail-info-row"><div class="detail-info-label">' + escapeHtml(label) + '</div><div class="detail-info-value">' + escapeHtml(value) + '</div></div>';
+  }
+
+  async function openDetailView(recordId) {
+    try {
+      var record = await findRecordById(recordId);
+      if (!record) return;
+
+      var detailPhotos = getRecordPhotos(record);
+      currentDetailId = record.id;
+      detailMood.textContent = record.mood || '이름 없는 하루';
+      detailNote.textContent = record.note || '짧은 감상이 아직 없습니다.';
+      detailInfoBlock.innerHTML = ''
+        + buildDetailInfoRow('다녀온 날짜', record.date || '')
+        + buildDetailInfoRow('캠핑장', record.place || '기록되지 않음')
+        + buildDetailInfoRow('머문 시간', record.stay || '')
+        + buildDetailInfoRow('함께한 형태', record.style || '')
+        + buildDetailInfoRow('바닥 느낌', record.ground || '')
+        + buildDetailInfoRow('그날의 날씨', record.weather || '맑고 선선했어');
+
+      if (detailPhotos.length) {
+        detailPhotoGallery.innerHTML = detailPhotos.map(function (src, index) {
+          return '<img src="' + src + '" class="detail-photo" alt="캠핑 기록 상세 사진 ' + (index + 1) + '">';
+        }).join('');
+        detailEmptyPhoto.classList.remove('show');
+      } else {
+        detailPhotoGallery.innerHTML = '';
+        detailEmptyPhoto.classList.add('show');
+      }
+
+      detailModal.classList.add('show');
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  function closeDetailView() {
+    detailModal.classList.remove('show');
+    currentDetailId = null;
+  }
+
   function buildFormRecord() {
     var rawDate = dateInput.value || getTodayValue();
+    var normalizedPhotos = sanitizeRecordPhotos(currentPhotos);
 
     return {
       id: editingRecordId ? Number(editingRecordId) : Date.now(),
@@ -1553,7 +1461,8 @@
       ground: getActiveValue('groundGroup'),
       weather: getActiveValue('weatherGroup') || '맑고 선선했어',
       note: noteInput.value.trim() || '짧은 감상이 아직 없습니다.',
-      photo: sanitizeRecordPhoto(currentPhotoData)
+      photo: normalizedPhotos[0] || '',
+      photos: normalizedPhotos
     };
   }
 
@@ -1584,7 +1493,7 @@
       var records = await getRecords();
       var backup = {
         app: 'foresite',
-        version: 1,
+        version: 2,
         exportedAt: new Date().toISOString(),
         recordCount: records.length,
         records: records.map(function (record, index) {
@@ -1602,144 +1511,143 @@
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-
-      setTimeout(function () {
-        URL.revokeObjectURL(url);
-      }, 1000);
-
-      showToast('기억을 JSON 파일로 챙겨두었어요.');
+      URL.revokeObjectURL(url);
+      showToast('기억을 파일로 조용히 챙겨두었습니다.');
     } catch (error) {
       console.error(error);
-      showToast('백업 파일을 만드는 중 오류가 생겼어요.');
     }
   }
 
-  async function restoreBackupFromFile(file) {
+  async function importBackupFile(file) {
     if (!file) return;
 
-    var reader = new FileReader();
+    try {
+      var text = await file.text();
+      var parsed = JSON.parse(text);
+      var rawRecords = Array.isArray(parsed) ? parsed : parsed.records;
 
-    reader.onload = async function (event) {
-      try {
-        var text = event.target.result;
-        var parsed = JSON.parse(text);
-        var sourceRecords = [];
-
-        if (Array.isArray(parsed)) {
-          sourceRecords = parsed;
-        } else if (parsed && Array.isArray(parsed.records)) {
-          sourceRecords = parsed.records;
-        } else {
-          showToast('복원할 수 있는 기록 형식이 아니에요.');
-          return;
-        }
-
-        var normalizedRecords = sourceRecords.map(function (item, index) {
-          return normalizeImportedRecord(item, index);
-        });
-
-        if (!window.confirm('현재 기록을 지우고 백업 파일 내용으로 복원할까요?')) {
-          return;
-        }
-
-        await clearAllRecords();
-        await saveRecordsBulk(normalizedRecords);
-        currentSearchTerm = '';
-        searchInput.value = '';
-        closeDetailView();
-        recordModal.classList.remove('show');
-        resetForm();
-        shouldAnimateLatestCard = false;
-        await renderRecords();
-        showToast('백업 파일에서 기억을 꺼내두었어요.');
-      } catch (error) {
-        console.error(error);
-        showToast('백업 파일을 읽는 중 오류가 생겼어요.');
-      } finally {
-        importBackupInput.value = '';
+      if (!Array.isArray(rawRecords)) {
+        showToast('꺼내본 파일 형식이 올바르지 않습니다.');
+        return;
       }
-    };
 
-    reader.onerror = function () {
-      showToast('파일을 읽지 못했어요.');
-      importBackupInput.value = '';
-    };
+      var normalized = rawRecords.map(function (record, index) {
+        return normalizeImportedRecord(record, index);
+      });
 
-    reader.readAsText(file, 'utf-8');
+      await clearAllRecords();
+      await saveRecordsBulk(normalized);
+      await renderRecords();
+      showToast('챙겨둔 기억을 다시 꺼내두었습니다.');
+    } catch (error) {
+      console.error(error);
+      showToast('꺼내보는 중 오류가 생겼어요.');
+    }
   }
 
   openModalButton.addEventListener('click', openCreateMode);
-
   closeModalButton.addEventListener('click', function () {
     recordModal.classList.remove('show');
-    resetForm();
+  });
+  saveRecordButton.addEventListener('click', submitRecord);
+  closeDetailButton.addEventListener('click', closeDetailView);
+  exportBackupButton.addEventListener('click', exportBackup);
+  importBackupButton.addEventListener('click', function () {
+    importBackupInput.click();
+  });
+  importBackupInput.addEventListener('change', function () {
+    importBackupFile(importBackupInput.files[0]);
+    importBackupInput.value = '';
   });
 
-  recordModal.addEventListener('click', function (e) {
-    if (e.target === recordModal) {
+  recordModal.addEventListener('click', function (event) {
+    if (event.target === recordModal) {
       recordModal.classList.remove('show');
-      resetForm();
     }
   });
 
-  closeDetailButton.addEventListener('click', function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    closeDetailView();
+  detailModal.addEventListener('click', function (event) {
+    if (event.target === detailModal) {
+      closeDetailView();
+    }
   });
 
-  detailSheet.addEventListener('click', function (e) {
-    e.stopPropagation();
+  latestRecord.addEventListener('click', function (e) {
+    var card = e.target.closest('.trip-card');
+    if (!card) return;
+    var recordId = card.getAttribute('data-id');
+    if (!recordId) return;
+    openDetailView(recordId);
   });
 
-  detailModal.addEventListener('click', function (e) {
-    if (e.target === detailModal) closeDetailView();
-  });
+  recordsList.addEventListener('click', function (event) {
+    var seasonToggle = event.target.closest('[data-role="season-toggle"]');
+    if (seasonToggle) {
+      event.preventDefault();
+      event.stopPropagation();
 
-  detailEditButton.addEventListener('click', function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!currentDetailId) return;
-    var recordId = currentDetailId;
-    detailModal.classList.remove('show');
-    openEditMode(recordId);
-  });
+      var seasonBlock = seasonToggle.closest('.season-block');
+      var seasonPanel = seasonBlock.querySelector('[data-role="season-panel"]');
+      var willOpen = seasonToggle.getAttribute('aria-expanded') !== 'true';
 
-  detailDeleteButton.addEventListener('click', function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!currentDetailId) return;
-    if (!window.confirm('이 기록을 삭제할까요?')) return;
+      var allSeasonToggles = recordsList.querySelectorAll('[data-role="season-toggle"]');
+      var allSeasonPanels = recordsList.querySelectorAll('[data-role="season-panel"]');
 
-    deleteRecord(currentDetailId)
-      .then(function () {
-        closeDetailView();
-        renderRecords();
-      })
-      .catch(function (error) {
-        console.error(error);
+      allSeasonToggles.forEach(function (button) {
+        button.setAttribute('aria-expanded', 'false');
       });
+
+      allSeasonPanels.forEach(function (panel) {
+        panel.classList.remove('open');
+      });
+
+      if (willOpen) {
+        seasonToggle.setAttribute('aria-expanded', 'true');
+        seasonPanel.classList.add('open');
+      }
+      return;
+    }
+
+    var tripCard = event.target.closest('.trip-card');
+    if (tripCard) {
+      var recordId = tripCard.getAttribute('data-id');
+      if (recordId) {
+        openDetailView(recordId);
+      }
+    }
   });
 
-  searchInput.addEventListener('input', function (e) {
-    currentSearchTerm = e.target.value || '';
+  searchInput.addEventListener('input', function () {
+    currentSearchTerm = searchInput.value || '';
     renderRecords();
   });
 
+  detailEditButton.addEventListener('click', function () {
+    if (currentDetailId == null) return;
+    closeDetailView();
+    openEditMode(currentDetailId);
+  });
+
+  detailDeleteButton.addEventListener('click', async function () {
+    if (currentDetailId == null) return;
+    var targetId = currentDetailId;
+
+    try {
+      await deleteRecord(targetId);
+      closeDetailView();
+      await renderRecords();
+      showToast('기억을 조용히 덜어냈습니다.');
+    } catch (error) {
+      console.error(error);
+    }
+  });
+
   photoInput.addEventListener('change', function () {
-    var file = photoInput.files[0];
+    var files = Array.prototype.slice.call(photoInput.files || []).slice(0, 3);
 
-    if (!file) {
-      if (currentPhotoData) {
-        photoPreview.src = currentPhotoData;
-        photoPreview.style.display = 'block';
-        photoStatus.textContent = '기존 사진이 유지됩니다.';
-      } else {
-        photoPreview.style.display = 'none';
-        photoPreview.removeAttribute('src');
-        photoStatus.textContent = '';
-      }
-
+    if (!files.length) {
+      renderPhotoPreviewList(currentPhotos);
+      photoStatus.textContent = currentPhotos.length ? '기존 사진이 유지됩니다.' : '';
       saveRecordButton.disabled = false;
       saveRecordButton.textContent = editingRecordId ? '수정한 내용 저장하기' : '이 기억 저장하기';
       return;
@@ -1747,58 +1655,25 @@
 
     saveRecordButton.disabled = true;
     saveRecordButton.textContent = '사진 처리 중...';
-    photoStatus.textContent = '사진을 더 자연스럽게 보이도록 조정하는 중입니다.';
+    photoStatus.textContent = '사진을 앱에 맞게 정리하는 중입니다.';
 
-    compressImage(file, function (dataUrl, width, height) {
-      currentPhotoBlob = null;
-      currentPhotoData = dataUrl;
-      photoPreview.src = currentPhotoData;
-      photoPreview.style.display = 'block';
-      photoStatus.textContent = '원본 ' + bytesToMB(file.size) + 'MB → 앱용 썸네일로 축소 완료 (' + width + '×' + height + ')';
-      saveRecordButton.disabled = false;
-      saveRecordButton.textContent = editingRecordId ? '수정한 내용 저장하기' : '이 기억 저장하기';
+    var results = [];
+    var done = 0;
+
+    files.forEach(function (file, index) {
+      compressImage(file, function (dataUrl) {
+        results[index] = dataUrl;
+        done += 1;
+
+        if (done === files.length) {
+          currentPhotos = sanitizeRecordPhotos(results);
+          renderPhotoPreviewList(currentPhotos);
+          photoStatus.textContent = currentPhotos.length + '장 사진을 앱용 썸네일로 정리했습니다.';
+          saveRecordButton.disabled = false;
+          saveRecordButton.textContent = editingRecordId ? '수정한 내용 저장하기' : '이 기억 저장하기';
+        }
+      });
     });
-  });
-
-  saveRecordButton.addEventListener('click', function () {
-    submitRecord();
-  });
-
-  exportBackupButton.addEventListener('click', function () {
-    exportBackup();
-  });
-
-  importBackupButton.addEventListener('click', function () {
-    importBackupInput.click();
-  });
-
-  importBackupInput.addEventListener('change', function () {
-    var file = importBackupInput.files[0];
-    restoreBackupFromFile(file);
-  });
-
-  recordsList.addEventListener('click', function (e) {
-    var seasonToggle = e.target.closest('[data-role="season-toggle"]');
-    if (seasonToggle) {
-      e.preventDefault();
-      e.stopPropagation();
-
-      var seasonBlock = seasonToggle.closest('.season-block');
-      var seasonPanel = seasonBlock.querySelector('[data-role="season-panel"]');
-      var willOpen = seasonToggle.getAttribute('aria-expanded') !== 'true';
-
-      seasonToggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
-      seasonPanel.classList.toggle('open', willOpen);
-      return;
-    }
-
-    var card = e.target.closest('.trip-card');
-    if (!card) return;
-    if (e.target.closest('.edit-button') || e.target.closest('.delete-button')) return;
-
-    var recordId = card.getAttribute('data-id');
-    if (!recordId) return;
-    openDetailView(recordId);
   });
 
   activateChoiceGroup('stayGroup');
@@ -1807,6 +1682,6 @@
   activateChoiceGroup('weatherGroup');
   resetForm();
   renderRecords();
-  </script>
+</script>
 </body>
 </html>
