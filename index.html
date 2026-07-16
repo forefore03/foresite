@@ -32,6 +32,15 @@
     --backup-blue: #d0dced;
     --backup-blue-hover: #c4d4e7;
     --backup-blue-text: #ffffff;
+
+    --spring-soft: #edf4e8;
+    --spring-line: #d8e5cf;
+    --summer-soft: #e8f2ec;
+    --summer-line: #cfe0d6;
+    --autumn-soft: #f5eee3;
+    --autumn-line: #e5d5bd;
+    --winter-soft: #eef1f6;
+    --winter-line: #d6dce8;
   }
 
   * { box-sizing: border-box; }
@@ -59,7 +68,8 @@
   .modal-sheet,
   .search-card,
   .detail-sheet,
-  .backup-card {
+  .backup-card,
+  .season-block {
     background: var(--card);
     border: 1px solid rgba(217, 212, 202, 0.8);
     box-shadow: var(--shadow);
@@ -76,7 +86,8 @@
   .delete-button,
   .edit-button,
   .detail-back-button,
-  .secondary-button {
+  .secondary-button,
+  .season-toggle {
     border: none;
     cursor: pointer;
     font-family: inherit;
@@ -206,8 +217,12 @@
     background: #eef4ee;
     border-radius: 18px;
     padding: 14px;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
     cursor: pointer;
+  }
+
+  .trip-card:last-child {
+    margin-bottom: 0;
   }
 
   .trip-card:active { transform: scale(0.995); }
@@ -260,6 +275,126 @@
     background: var(--accent-soft);
     color: var(--accent);
     font-weight: 700;
+  }
+
+  .season-accordion {
+    display: grid;
+    gap: 10px;
+  }
+
+  .season-block {
+    border-radius: 20px;
+    overflow: hidden;
+    background: #f7f4ee;
+  }
+
+  .season-block.season-spring {
+    background: var(--spring-soft);
+    border-color: var(--spring-line);
+  }
+
+  .season-block.season-summer {
+    background: var(--summer-soft);
+    border-color: var(--summer-line);
+  }
+
+  .season-block.season-autumn {
+    background: var(--autumn-soft);
+    border-color: var(--autumn-line);
+  }
+
+  .season-block.season-winter {
+    background: var(--winter-soft);
+    border-color: var(--winter-line);
+  }
+
+  .season-toggle {
+    width: 100%;
+    min-height: 58px;
+    padding: 16px 16px;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    text-align: left;
+  }
+
+  .season-toggle:active {
+    transform: scale(0.997);
+  }
+
+  .season-toggle-main {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .season-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .season-label {
+    font-size: 18px;
+    line-height: 1.2;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.25px;
+  }
+
+  .season-count-chip {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.58);
+    color: var(--text-soft);
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .season-meta {
+    font-size: 12px;
+    line-height: 1.35;
+    color: var(--muted);
+  }
+
+  .accordion-chevron {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.62);
+    color: var(--text-soft);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    transition: transform 0.2s ease, background-color 0.18s ease;
+  }
+
+  .season-toggle[aria-expanded="true"] .accordion-chevron {
+    transform: rotate(180deg);
+    background: rgba(255,255,255,0.9);
+  }
+
+  .season-panel {
+    display: none;
+    padding: 0 12px 12px;
+  }
+
+  .season-panel.open {
+    display: block;
+  }
+
+  .season-cards {
+    display: grid;
+    gap: 12px;
   }
 
   .modal,
@@ -795,6 +930,100 @@
     return parts[0] + '-' + parts[1] + '-' + parts[2];
   }
 
+  function parseRecordDateParts(dateValue) {
+    if (!dateValue) return { year: '', month: '', day: '' };
+
+    var normalized = String(dateValue).trim();
+
+    if (normalized.indexOf('-') > -1) {
+      var dashParts = normalized.split('-');
+      return {
+        year: dashParts[0] || '',
+        month: dashParts[1] || '',
+        day: dashParts[2] || ''
+      };
+    }
+
+    if (normalized.indexOf('.') > -1) {
+      var dotParts = normalized.split('.');
+      return {
+        year: dotParts[0] || '',
+        month: dotParts[1] || '',
+        day: dotParts[2] || ''
+      };
+    }
+
+    return { year: '', month: '', day: '' };
+  }
+
+  function getSeasonByMonth(monthValue) {
+    var month = Number(monthValue);
+    if (month === 3 || month === 4 || month === 5) return '봄';
+    if (month === 6 || month === 7 || month === 8) return '여름';
+    if (month === 9 || month === 10 || month === 11) return '가을';
+    return '겨울';
+  }
+
+  function getSeasonClassName(season) {
+    if (season === '봄') return 'season-spring';
+    if (season === '여름') return 'season-summer';
+    if (season === '가을') return 'season-autumn';
+    return 'season-winter';
+  }
+
+  function getSeasonKey(record) {
+    var parsed = parseRecordDateParts(record.date || '');
+    var year = parsed.year || '기타';
+    var season = getSeasonByMonth(parsed.month || '1');
+    return year + '-' + season;
+  }
+
+  function getSeasonLabelFromRecord(record) {
+    var parsed = parseRecordDateParts(record.date || '');
+    var year = parsed.year || '기타';
+    var season = getSeasonByMonth(parsed.month || '1');
+    return year + ' ' + season;
+  }
+
+  function getSeasonSortValue(seasonKey) {
+    var parts = String(seasonKey).split('-');
+    var year = Number(parts[0]) || 0;
+    var season = parts[1] || '';
+    var seasonOrder = {
+      '봄': 1,
+      '여름': 2,
+      '가을': 3,
+      '겨울': 4
+    };
+    return year * 10 + (seasonOrder[season] || 0);
+  }
+
+  function getLatestSeasonKey(records) {
+    if (!Array.isArray(records) || records.length === 0) return '';
+    return getSeasonKey(records[0]);
+  }
+
+  function groupRecordsBySeason(records) {
+    var grouped = {};
+
+    records.forEach(function (record) {
+      var seasonKey = getSeasonKey(record);
+
+      if (!grouped[seasonKey]) {
+        grouped[seasonKey] = {
+          key: seasonKey,
+          label: getSeasonLabelFromRecord(record),
+          season: getSeasonByMonth(parseRecordDateParts(record.date || '').month || '1'),
+          records: []
+        };
+      }
+
+      grouped[seasonKey].records.push(record);
+    });
+
+    return grouped;
+  }
+
   function getActiveValue(groupId) {
     var group = document.getElementById(groupId);
     var active = group.querySelector('.choice-button.active');
@@ -976,7 +1205,7 @@
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
+      .replace(/\"/g, '&quot;')
       .replace(/'/g, '&#039;');
   }
 
@@ -1002,6 +1231,51 @@
     html += '</article>';
     return html;
   }
+
+  function buildSeasonChevron() {
+    return '<span class="accordion-chevron" aria-hidden="true">⌄</span>';
+  }
+
+  function renderSeasonGroupedRecords(records) {
+  if (!Array.isArray(records) || records.length === 0) {
+    return '<div class="empty-state">아직 지난 기억들은 없습니다. 다음 기록부터 이 아래에 차곡차곡 쌓입니다.</div>';
+  }
+
+  var grouped = groupRecordsBySeason(records);
+  var seasonKeys = Object.keys(grouped).sort(function (a, b) {
+    return getSeasonSortValue(b) - getSeasonSortValue(a);
+  });
+  var latestSeasonKey = getLatestSeasonKey(records);
+
+  return '<div class="season-accordion">' + seasonKeys.map(function (seasonKey) {
+    var group = grouped[seasonKey];
+    var isOpen = seasonKey === latestSeasonKey;
+    var recentDate = group.records[0] ? group.records[0].date : '';
+    var seasonClass = getSeasonClassName(group.season);
+    var cardsHtml = group.records.map(function (record) {
+      return buildRecordCard(record, false);
+    }).join('');
+
+    return ''
+      + '<section class="season-block ' + seasonClass + '" data-season-key="' + escapeHtml(seasonKey) + '">'
+      +   '<button type="button" class="season-toggle" data-role="season-toggle" data-season-key="' + escapeHtml(seasonKey) + '" aria-expanded="' + (isOpen ? 'true' : 'false') + '">'
+      +     '<span class="season-toggle-main">'
+      +       '<span class="season-title-row">'
+      +         '<span class="season-label">' + escapeHtml(group.label) + '</span>'
+      +         '<span class="season-count-chip">' + group.records.length + '건</span>'
+      +       '</span>'
+      +       '<span class="season-meta">가장 최근 ' + escapeHtml(recentDate) + '</span>'
+      +     '</span>'
+      +     buildSeasonChevron()
+      +   '</button>'
+      +   '<div class="season-panel' + (isOpen ? ' open' : '') + '" data-role="season-panel">'
+      +     '<div class="season-cards">'
+      +       cardsHtml
+      +     '</div>'
+      +   '</div>'
+      + '</section>';
+  }).join('') + '</div>';
+}
 
   async function renderRecords() {
     try {
@@ -1042,9 +1316,7 @@
       return;
     }
 
-    recordsList.innerHTML = filteredRemainingRecords
-      .map(function (record) { return buildRecordCard(record, false); })
-      .join('');
+    recordsList.innerHTML = renderSeasonGroupedRecords(filteredRemainingRecords);
   }
 
   function setDefaultChoice(groupId, value) {
@@ -1505,10 +1777,25 @@
     restoreBackupFromFile(file);
   });
 
-  document.addEventListener('click', function (e) {
+  recordsList.addEventListener('click', function (e) {
+    var seasonToggle = e.target.closest('[data-role="season-toggle"]');
+    if (seasonToggle) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      var seasonBlock = seasonToggle.closest('.season-block');
+      var seasonPanel = seasonBlock.querySelector('[data-role="season-panel"]');
+      var willOpen = seasonToggle.getAttribute('aria-expanded') !== 'true';
+
+      seasonToggle.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+      seasonPanel.classList.toggle('open', willOpen);
+      return;
+    }
+
     var card = e.target.closest('.trip-card');
     if (!card) return;
     if (e.target.closest('.edit-button') || e.target.closest('.delete-button')) return;
+
     var recordId = card.getAttribute('data-id');
     if (!recordId) return;
     openDetailView(recordId);
