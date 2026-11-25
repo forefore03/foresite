@@ -652,6 +652,7 @@
           <button type="button" class="secondary-button backup-export-button" id="exportBackupButton">기억 챙겨두기</button>
           <button type="button" class="secondary-button backup-import-button" id="importBackupButton">꺼내보기</button>
         </div>
+        <button type="button" class="secondary-button" id="foresiteConnectButton" style="margin-top:10px;background:#f2efe8;color:#466f5e">Chronicles 연결 · <span id="foresiteConnectStatus">미연결</span></button>
         <input type="file" id="importBackupInput" class="hidden-input" accept="application/json,.json">
       </section>
 
@@ -827,6 +828,63 @@
   var exportBackupButton = document.getElementById('exportBackupButton');
   var importBackupButton = document.getElementById('importBackupButton');
   var importBackupInput = document.getElementById('importBackupInput');
+
+  // Optional one-way export of only camping day, place and original brief note.
+  // Photos, other private attributes, and Chronicles password are never transmitted.
+  var FORESITE_SYNC_URL='https://diary.forefore.workers.dev/api/foresite-sync';
+  var FORESITE_PAIR_KEY='foresite-chronicles-link-v1', FORESITE_SYNC_HASH='foresite-chronicles-hash-v1';
+  var foresiteSyncPromise=null,foresiteSyncQueued=false,foresiteLastError=false;
+  function foresiteStatus(){
+    document.getElementById('foresiteConnectStatus').textContent=localStorage.getItem(FORESITE_PAIR_KEY)?(foresiteLastError?'전송 대기':'연결됨'):'미연결';
+  }
+  function normalizedForesiteDate(value){
+    var v=String(value||'').trim().replaceAll('.','-');
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(v))return '';
+    var d=new Date(v+'T12:00:00Z');
+    return !Number.isNaN(d.getTime()) && d.toISOString().slice(0,10)===v?v:'';
+  }
+  async function foresiteItems(){
+    var records=await getRecords();
+    return records.map(function(r){
+      var note=String(r.note||'').trim();
+      if(note==='짧은 감상이 아직 없습니다.')note='';
+      return {id:String(r.id),date:normalizedForesiteDate(r.date),place:String(r.place||'').trim(),note:note};
+    }).filter(function(r){return r.date&&r.place}).sort(function(a,b){return a.id.localeCompare(b.id)});
+  }
+  async function foresiteDigest(value){
+    var bytes=new TextEncoder().encode(value),sum=await crypto.subtle.digest('SHA-256',bytes);
+    return Array.from(new Uint8Array(sum),function(v){return v.toString(16).padStart(2,'0')}).join('');
+  }
+  async function pushForesite(force){
+    var token=localStorage.getItem(FORESITE_PAIR_KEY);if(!token)return;
+    if(foresiteSyncPromise){foresiteSyncQueued=true;return foresiteSyncPromise}
+    foresiteSyncPromise=(async function(){
+      var payload=JSON.stringify({records:await foresiteItems()}),hash=await foresiteDigest(payload);
+      if(!force&&hash===localStorage.getItem(FORESITE_SYNC_HASH))return;
+      var response=await fetch(FORESITE_SYNC_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:payload,cache:'no-store'});
+      if(!response.ok)throw Error(response.status===401?'foresite 연결키가 만료됐거나 유효하지 않습니다.':'Chronicles 전송 실패 ('+response.status+')');
+      localStorage.setItem(FORESITE_SYNC_HASH,hash);foresiteLastError=false;foresiteStatus();
+    })();
+    try{await foresiteSyncPromise}finally{
+      foresiteSyncPromise=null;
+      if(foresiteSyncQueued){foresiteSyncQueued=false;void pushForesite(false).catch(function(e){foresiteLastError=true;foresiteStatus();console.warn(e)})}
+    }
+  }
+  function queueForesite(){if(localStorage.getItem(FORESITE_PAIR_KEY))void pushForesite(false).catch(function(e){foresiteLastError=true;foresiteStatus();console.warn('foresite → Chronicles 전송 대기:',e.message)})}
+  document.getElementById('foresiteConnectButton').addEventListener('click',async function(){
+    var previous=localStorage.getItem(FORESITE_PAIR_KEY);
+    var entered=prompt('Chronicles > 사본 > foresite 연결키 복사에서 받은 키를 붙여넣으세요. 연결 해제는 "해제"를 입력하세요.','');
+    if(entered===null)return;
+    if(entered.trim()==='해제'){
+      localStorage.removeItem(FORESITE_PAIR_KEY);localStorage.removeItem(FORESITE_SYNC_HASH);foresiteStatus();showToast('Chronicles 자동 전송을 중지했습니다.');return;
+    }
+    if(!/^v1\.\d{13}\.[\w-]+\.[\w-]+$/.test(entered.trim())){showToast('연결키 형식이 올바르지 않습니다.');return}
+    localStorage.setItem(FORESITE_PAIR_KEY,entered.trim());localStorage.removeItem(FORESITE_SYNC_HASH);
+    try{await pushForesite(true);foresiteStatus();showToast('Chronicles 연결 완료! 과거 캠핑 기록도 가져왔습니다.')}
+    catch(e){if(previous)localStorage.setItem(FORESITE_PAIR_KEY,previous);else localStorage.removeItem(FORESITE_PAIR_KEY);localStorage.removeItem(FORESITE_SYNC_HASH);foresiteStatus();showToast(e.message)}
+  });
+  window.addEventListener('online',queueForesite);
+  foresiteStatus();
 
   var editingRecordId = null;
   var currentDetailId = null;
@@ -1483,6 +1541,7 @@
       }
 
       await renderRecords();
+      queueForesite();
       recordModal.classList.remove('show');
       resetForm();
     } catch (error) {
@@ -1540,6 +1599,7 @@
       await clearAllRecords();
       await saveRecordsBulk(normalized);
       await renderRecords();
+      queueForesite();
       showToast('챙겨둔 기억을 다시 꺼내두었습니다.');
     } catch (error) {
       console.error(error);
@@ -1655,6 +1715,7 @@
 
     try {
       await deleteRecord(targetId);
+      queueForesite();
       closeDetailView();
       await renderRecords();
       showToast('기억을 삭제했습니다.');
@@ -1702,7 +1763,7 @@
   activateChoiceGroup('groundGroup');
   activateChoiceGroup('weatherGroup');
   resetForm();
-  renderRecords();
+  renderRecords().then(queueForesite).catch(console.warn);
 </script>
 </body>
 </html>
